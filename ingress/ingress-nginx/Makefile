@@ -46,5 +46,9 @@ clean:
 test:
 	envsubst < test.yaml | kubectl -n default apply --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f -
-	#sleep 10
-	#curl -vv -s $(HOST_FQDN)
+	curl -i --silent --connect-timeout 5 \
+		--max-time 10 \
+		--retry 5 \
+		--retry-delay 0 \
+		--retry-max-time 40 \
+		http://$(HOST_FQDN)
