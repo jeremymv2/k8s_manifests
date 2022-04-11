@@ -7,8 +7,18 @@ REPO_URL := https://kubernetes.github.io/$(CHART_NAME)
 KUBE_CONTEXT := default
 KUBECONFIG ?= default
 HOST_FQDN := demo-ingress.ethzero.cloud
+TLS_KEY := tls.key
+TLS_CRT := tls.crt
 
 export HOST_FQDN
+
+%.key:
+	umask 77 ; \
+		openssl genrsa 2048 > $@
+
+$(TLS_CRT): $(TLS_KEY)
+	openssl req -x509 -sha256 -nodes -days 1825 -new -key $^ \
+		-out $@ -subj "/CN=nginxsvc/O=nginxsvc"
 
 setup: $(CMCTL)
 	@echo "Adding helm repo"
@@ -20,10 +30,15 @@ destroy:
 		$(KUBECONFIG)"
 	kubectl -n $(NAMESPACE) delete -f $(RELEASE_NAME).yaml --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) || true
-	kubectl delete namespace $(NAMESPACE) --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) 
+	kubectl delete namespace $(NAMESPACE) --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG)
 		--force=true || true
 
-apply: setup
+tls: $(TLS_CRT)
+	kubectl create ns $(NAMESPACE) --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) || true
+	kubectl -n $(NAMESPACE) --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
+		create secret tls default-ingress-tls --key $(TLS_KEY) --cert $(TLS_CRT)
+
+apply: setup tls
 	@echo "Installing release $(RELEASE_NAME) into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) \
 		in $(KUBECONFIG)"
 	helm template $(CHART_NAME) $(CHART_REPO)/$(CHART_NAME) \
@@ -31,13 +46,8 @@ apply: setup
 		--kube-context $(KUBE_CONTEXT) \
 		--version $(CHART_VERSION) \
 		--values values.yaml > $(RELEASE_NAME).yaml
-	kubectl create ns $(NAMESPACE) --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) || true
 	kubectl -n $(NAMESPACE) apply -f $(RELEASE_NAME).yaml --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG)
-
-tls:
-	kubectl -n $(NAMESPACE) --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
-		apply -f default-ingress-cert.yaml
 
 clean:
 	envsubst < test.yaml | kubectl -n default delete --context $(KUBE_CONTEXT) \
@@ -47,6 +57,8 @@ test:
 	envsubst < test.yaml | kubectl -n default apply --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f -
 	curl -i --silent --connect-timeout 5 \
+		--fail \
+		--retry-all-errors \
 		--max-time 10 \
 		--retry 5 \
 		--retry-delay 0 \
