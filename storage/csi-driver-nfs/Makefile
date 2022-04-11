@@ -15,6 +15,7 @@ export NFS_SERVER NFS_PATH PROVISIONER_NAME NFS_SUBDIR_PROVISIONER_IMAGE
 
 setup:
 	helm repo add $(CHART_REPO) $(REPO_URL)
+	helm repo update
 
 destroy:
 	@echo "Deleting chart $(RELEASE_NAME) yaml with version $(CHART_VERSION) from $(CHART_REPO)/$(CHART_NAME) \
@@ -39,7 +40,7 @@ apply: setup labels
 	envsubst < 02_nfs-auto-provisioner.yaml | kubectl apply --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -n $(NAMESPACE) -f -
 
-tests:
+test:
 	envsubst < test-pvc.yaml | kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-n default -f -
 	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) wait -n default \
