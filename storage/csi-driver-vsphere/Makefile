@@ -20,7 +20,7 @@ setup:
 		-L https://raw.githubusercontent.com/kubernetes/cloud-provider-vsphere/master/releases/$(K8S_MAJOR_VERSION)/vsphere-cloud-controller-manager.yaml
 
 destroy:
-	@echo "Deleting $(RELEASE_NAME) with version $(CSI_VERSION) into \
+	@echo "Deleting $(RELEASE_NAME) with version $(CSI_VERSION) from \
 		namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	kubectl delete --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) --namespace $(NAMESPACE) \
 		secret vsphere-config-secret
