@@ -35,7 +35,7 @@ destroy:
 cloud-provider-vsphere: setup $(CONTROLLER_MANAGER_YAML)
 	for node in $$(kubectl get nodes -o jsonpath='{$$.items[*].metadata.name}') ; \
 		do echo $$node ; \
-		kubectl label nodes $$node node.cloudprovider.kubernetes.io/uninitialized=true:NoSchedule || true ; \
+		kubectl taint nodes $$node node.cloudprovider.kubernetes.io/uninitialized=true:NoSchedule || true ; \
 	done
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-f $(CONTROLLER_MANAGER_YAML)
