@@ -40,7 +40,7 @@ make apply
 # Validation
 
 The vsphere-cloud-controller-manager is responsible for putting this label on each node `ProviderID: vsphere://<provider-id1>`
-Double-check that it exists.
+Double-check that it exists in the output below.
 
 ```shell
 make validate
