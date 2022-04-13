@@ -26,7 +26,8 @@ destroy:
 labels:
 	for master in $$(kubectl get nodes --selector=node-role.kubernetes.io/master -o jsonpath='{$$.items[*].metadata.name}') ; \
 		do echo $$master ; \
-		kubectl label nodes $$master kubernetes.io/role=master || true ; \
+		kubectl label --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
+			nodes $$master kubernetes.io/role=master || true ; \
 	done
 
 apply: setup labels
