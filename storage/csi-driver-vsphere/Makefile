@@ -82,7 +82,7 @@ test:
 		-f test-pvc.yaml
 	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) wait -n default \
 		--for=condition=ready pod/busybox --timeout=120s
-	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) -n default get pvc
+	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) -n default describe pvc pvc1
 
 cleanup_test:
 	kubectl delete --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) -n default --force=true \
