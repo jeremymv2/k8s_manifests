@@ -1,5 +1,7 @@
 # Installs vSphere CSI
 
+VMware documentation for [vSphere CSI](https://docs.vmware.com/en/VMware-vSphere-Container-Storage-Plug-in/index.html)
+
 # Overview
 
 The `Makefile` here pretty much takes care of the installation of all the K8s components:
