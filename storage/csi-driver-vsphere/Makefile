@@ -55,7 +55,7 @@ apply: cloud-provider-vsphere
 		namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-f https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/$(CSI_VERSION)/manifests/vanilla/namespace.yaml
-	envsubst $(CSI_VSPHERE_CONF) | kubectl create --context $(KUBE_CONTEXT) --kubeconfig \
+	envsubst < $(CSI_VSPHERE_CONF) | kubectl create --context $(KUBE_CONTEXT) --kubeconfig \
 		$(KUBECONFIG) --namespace $(NAMESPACE) secret generic vsphere-config-secret \
 		--from-file=$(CSI_VSPHERE_CONF)=/dev/stdin
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
