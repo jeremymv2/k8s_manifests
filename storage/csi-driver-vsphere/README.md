@@ -14,15 +14,18 @@ There are [vCenter](https://docs.vmware.com/en/VMware-vSphere-Container-Storage-
 
 # Setup
 
+Set your vSphere configuration
+
 ```shell
-make setup
+cp .vcenter_config.example .vcenter_config
+vi .vcenter_config
+source .vcenter_config
 ```
 
-Edit the `Makefile` in this directory and change these two lines as needed:
+Edit the `Makefile` in this directory and change this line as needed:
 
 ```
 CSI_VERSION := v2.5.1
-K8S_MAJOR_VERSION := v1.21
 ```
 
 NOTE: For the above, utilize the [compatibility Matrix](https://docs.vmware.com/en/VMware-vSphere-Container-Storage-Plug-in/2.0/vmware-vsphere-csp-getting-started/GUID-D4AAD99E-9128-40CE-B89C-AD451DA8379D.html#GUID-D4AAD99E-9128-40CE-B89C-AD451DA8379D__SECTION_85EB5376-E31A-438A-83FA-9FB19EA46D43)

@@ -1,25 +1,18 @@
 RELEASE_NAME  := csi-driver-vsphere
 CSI_VERSION := v2.5.1
-K8S_MAJOR_VERSION := v1.21
 NAMESPACE  := vmware-system-csi
 KUBE_CONTEXT := default
 KUBECONFIG ?= default
 CSI_VSPHERE_CONF := csi-vsphere.conf
 CONTROLLER_MANAGER_YAML := vsphere-cloud-controller-manager.yaml
+VSPHERE_ENVVARS = .vcenter_config
+VCENTER_USER ?= YOUR_VCENTER_USER
+VCENTER_PASSWORD ?= YOUR_VCENTER_PASSWORD
+VCENTER_NAME := YOUR_VCENTER_NAME
+VCENTER_IP := YOUR_VCENTER_IP
+DATACENTER_NAME := YOUR_DATACENTER_NAME
 
-$(CSI_VSPHERE_CONF):
-	@echo "You must create $(CSI_VSPHERE_CONF) from the $(CSI_VSPHERE_CONF).example file!"
-	@exit 1
-
-$(CONTROLLER_MANAGER_YAML):
-	@echo "You must create $(CONTROLLER_MANAGER_YAML) from the $(CONTROLLER_MANAGER_YAML).example file!"
-	@exit 1
-
-setup:
-	curl -o $(CONTROLLER_MANAGER_YAML).example \
-		-L https://raw.githubusercontent.com/kubernetes/cloud-provider-vsphere/master/releases/$(K8S_MAJOR_VERSION)/vsphere-cloud-controller-manager.yaml
-	@echo "Please customize $(CONTROLLER_MANAGER_YAML).example as a new file $(CONTROLLER_MANAGER_YAML)"
-	@echo "Please customize $(CSI_VSPHERE_CONF).example as a new file $(CSI_VSPHERE_CONF)"
+export VCENTER_USER VCENTER_PASSWORD
 
 destroy:
 	@echo "Deleting $(RELEASE_NAME) with version $(CSI_VERSION) from \
@@ -32,30 +25,37 @@ destroy:
 		-f storage-class.yaml || true
 	kubectl delete --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-f https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/$(CSI_VERSION)/manifests/vanilla/namespace.yaml || true
-	kubectl delete --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
-		-f $(CONTROLLER_MANAGER_YAML) || true
+	envsubst < $(CONTROLLER_MANAGER_YAML) | kubectl delete --context $(KUBE_CONTEXT) \
+		--kubeconfig $(KUBECONFIG) -f - || true
 	for node in $$(kubectl get nodes -o jsonpath='{$$.items[*].metadata.name}') ; \
 		do echo $$node ; \
 		kubectl taint --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 			nodes $$node node.cloudprovider.kubernetes.io/uninitialized=true:NoSchedule- || true ; \
 	done
 
-cloud-provider-vsphere: $(CONTROLLER_MANAGER_YAML)
+envvars:
+ifeq ($(VCENTER_USER),YOUR_VCENTER_USER)
+	@echo "VCENTER_USER is not set! Please set in $(VSPHERE_ENVVARS) then run: source $(VSPHERE_ENVVARS)"
+	exit 1
+endif
+
+cloud-provider-vsphere: envvars
 	for node in $$(kubectl get nodes -o jsonpath='{$$.items[*].metadata.name}') ; \
 		do echo $$node ; \
 		kubectl taint --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 			nodes $$node node.cloudprovider.kubernetes.io/uninitialized=true:NoSchedule || true ; \
 	done
-	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
-		-f $(CONTROLLER_MANAGER_YAML)
+	envsubst < $(CONTROLLER_MANAGER_YAML) | kubectl apply --context $(KUBE_CONTEXT) \
+		--kubeconfig $(KUBECONFIG) -f -
 
-apply: $(CSI_VSPHERE_CONF) cloud-provider-vsphere
+apply: cloud-provider-vsphere
 	@echo "Installing $(RELEASE_NAME) version $(CHART_VERSION) into \
 		namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-f https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/$(CSI_VERSION)/manifests/vanilla/namespace.yaml
-	kubectl create --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) --namespace $(NAMESPACE) \
-		secret generic vsphere-config-secret --from-file=csi-vsphere.conf
+	envsubst $(CSI_VSPHERE_CONF) | kubectl create --context $(KUBE_CONTEXT) --kubeconfig \
+		$(KUBECONFIG) --namespace $(NAMESPACE) secret generic vsphere-config-secret \
+		--from-file=$(CSI_VSPHERE_CONF)=/dev/stdin
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-f https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/$(CSI_VERSION)/manifests/vanilla/vsphere-csi-driver.yaml
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
