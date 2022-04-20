@@ -58,9 +58,9 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - ${HOST_FQDN}
+    - ${INGRESS_FQDN}
   rules:
-  - host: ${HOST_FQDN}
+  - host: ${INGRESS_FQDN}
     http:
       paths:
       - backend:

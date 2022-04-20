@@ -6,11 +6,11 @@ RELEASE_NAME := $(CHART_NAME)-$(shell echo $(CHART_VERSION) | sed -e 's/\./\-/g'
 REPO_URL := https://kubernetes.github.io/$(CHART_NAME)
 KUBE_CONTEXT := default
 KUBECONFIG ?= default
-HOST_FQDN := demo-ingress.ethzero.cloud
+INGRESS_FQDN := demo-ingress.ethzero.cloud
 TLS_KEY := tls.key
 TLS_CRT := tls.crt
 
-export HOST_FQDN
+export INGRESS_FQDN
 
 %.key:
 	umask 77 ; \
@@ -63,4 +63,4 @@ test:
 		--retry 5 \
 		--retry-delay 0 \
 		--retry-max-time 40 \
-		http://$(HOST_FQDN)
+		http://$(INGRESS_FQDN)
