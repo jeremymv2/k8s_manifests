@@ -12,7 +12,7 @@ VCENTER_PASSWORD ?= YOUR_VCENTER_PASSWORD
 VCENTER_NAME ?= YOUR_VCENTER_NAME
 VCENTER_IP ?= YOUR_VCENTER_IP
 VCENTER_PORT ?= YOUR_VCENTER_PORT
-DATACENTER_NAME := YOUR_DATACENTER_NAME
+DATACENTER_NAME ?= YOUR_DATACENTER_NAME
 
 export VCENTER_USER VCENTER_PASSWORD VCENTER_IP VCENTER_NAME VCENTER_PORT DATACENTER_NAME K8S_CLUSTER_UNIQUE_ID
 
@@ -38,7 +38,7 @@ destroy:
 		-f https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/$(CSI_VERSION)/manifests/vanilla/namespace.yaml || true
 	envsubst < $(CONTROLLER_MANAGER_YAML) | kubectl delete --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f - || true
-	for node in $$(kubectl get nodes -o jsonpath='{$$.items[*].metadata.name}') ; \
+	for node in $$(kubectl get nodes -l node-role.kubernetes.io/worker= -o jsonpath='{$$.items[*].metadata.name}') ; \
 		do echo $$node ; \
 		kubectl taint --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 			nodes $$node node.cloudprovider.kubernetes.io/uninitialized=true:NoSchedule- || true ; \
@@ -51,7 +51,7 @@ ifeq ($(VCENTER_USER),YOUR_VCENTER_USER)
 endif
 
 cloud-provider-vsphere: envvars
-	for node in $$(kubectl get nodes -o jsonpath='{$$.items[*].metadata.name}') ; \
+	for node in $$(kubectl get nodes -l node-role.kubernetes.io/worker= -o jsonpath='{$$.items[*].metadata.name}') ; \
 		do echo $$node ; \
 		kubectl taint --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 			nodes $$node node.cloudprovider.kubernetes.io/uninitialized=true:NoSchedule || true ; \
@@ -94,8 +94,6 @@ validate:
 test:
 	kubectl apply --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) -n default \
 		-f test-pvc.yaml
-	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) wait -n default \
-		--for=condition=ready pod/busybox --timeout=120s
 	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) -n default describe pvc pvc1
 
 cleanup_test:
