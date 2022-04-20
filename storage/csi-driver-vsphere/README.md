@@ -35,7 +35,7 @@ CSI_VERSION := v2.5.1
 K8S_CLUSTER_UNIQUE_ID := YOUR_PMK_CLUSTER_ID
 ```
 
-NOTE: For the above, utilize the [compatibility Matrix](https://docs.vmware.com/en/VMware-vSphere-Container-Storage-Plug-in/2.0/vmware-vsphere-csp-getting-started/GUID-D4AAD99E-9128-40CE-B89C-AD451DA8379D.html#GUID-D4AAD99E-9128-40CE-B89C-AD451DA8379D__SECTION_85EB5376-E31A-438A-83FA-9FB19EA46D43)
+NOTE: For the above `CSI_VERSION`, utilize the [compatibility Matrix](https://docs.vmware.com/en/VMware-vSphere-Container-Storage-Plug-in/2.0/vmware-vsphere-csp-getting-started/GUID-D4AAD99E-9128-40CE-B89C-AD451DA8379D.html#GUID-D4AAD99E-9128-40CE-B89C-AD451DA8379D__SECTION_85EB5376-E31A-438A-83FA-9FB19EA46D43)
 
 Export the KUBECONFIG environment variable, pointing to the PMK cluster's kubeconfig.yaml
 
