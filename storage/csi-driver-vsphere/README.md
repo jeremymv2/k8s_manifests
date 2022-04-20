@@ -12,6 +12,12 @@ The `Makefile` here pretty much takes care of the installation of all the K8s co
 
 There are [vCenter](https://docs.vmware.com/en/VMware-vSphere-Container-Storage-Plug-in/2.0/vmware-vsphere-csp-getting-started/GUID-0AB6E692-AA47-4B6A-8CEA-38B754E16567.html#GUID-FFE45B20-576F-42D9-953F-6E91AC76C641__GUID-B272488E-6A7B-4BEE-9206-0FD55996AA14) items to address first, before installing any K8s components.
 
+Check the local workstation has the correct tools available:
+
+```shell
+make check
+```
+
 # Setup
 
 Set your vSphere configuration

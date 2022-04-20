@@ -16,6 +16,15 @@ DATACENTER_NAME := YOUR_DATACENTER_NAME
 
 export VCENTER_USER VCENTER_PASSWORD VCENTER_IP VCENTER_NAME VCENTER_PORT DATACENTER_NAME K8S_CLUSTER_UNIQUE_ID
 
+check:
+	which kubectl
+	which make
+	which curl
+	which git
+	which envsubst
+	which jq
+	@echo "All pre-requisites available!"
+
 destroy:
 	@echo "Deleting $(RELEASE_NAME) with version $(CSI_VERSION) from \
 		namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
@@ -64,6 +73,9 @@ apply: cloud-provider-vsphere
 		-f storage-class.yaml
 
 validate:
+	kubectl get --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) nodes -o json | \
+		jq '.items[]|[.metadata.name, .spec.providerID, .status.nodeInfo.systemUUID]'
+	@echo "=================================================="
 	kubectl get --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) --namespace $(NAMESPACE) \
 		nodes -o wide --show-labels
 	@echo "=================================================="
