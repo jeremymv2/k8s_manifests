@@ -49,7 +49,7 @@ apply: setup tls
 	kubectl -n $(NAMESPACE) apply -f $(RELEASE_NAME).yaml --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG)
 
-clean:
+cleanup_test:
 	envsubst < test.yaml | kubectl -n default delete --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f - || true
 
