@@ -2,8 +2,6 @@ RELEASE_NAME  := csi-driver-vsphere
 CSI_VERSION := v2.5.1
 K8S_CLUSTER_UNIQUE_ID := YOUR_PMK_CLUSTER_ID
 NAMESPACE  := vmware-system-csi
-KUBE_CONTEXT := default
-KUBECONFIG ?= default
 CSI_VSPHERE_CONF := csi-vsphere.conf
 CONTROLLER_MANAGER_YAML := vsphere-cloud-controller-manager.yaml
 VSPHERE_ENVVARS = .vcenter_config
@@ -14,16 +12,9 @@ VCENTER_IP ?= YOUR_VCENTER_IP
 VCENTER_PORT ?= YOUR_VCENTER_PORT
 DATACENTER_NAME ?= YOUR_DATACENTER_NAME
 
-export VCENTER_USER VCENTER_PASSWORD VCENTER_IP VCENTER_NAME VCENTER_PORT DATACENTER_NAME K8S_CLUSTER_UNIQUE_ID
+include ../../Makefile
 
-check:
-	which kubectl
-	which make
-	which curl
-	which git
-	which envsubst
-	which jq
-	@echo "All pre-requisites available!"
+export VCENTER_USER VCENTER_PASSWORD VCENTER_IP VCENTER_NAME VCENTER_PORT DATACENTER_NAME K8S_CLUSTER_UNIQUE_ID
 
 destroy:
 	@echo "Deleting $(RELEASE_NAME) with version $(CSI_VERSION) from \

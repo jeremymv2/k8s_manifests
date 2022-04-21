@@ -4,11 +4,11 @@ NAMESPACE  := $(CHART_NAME)
 CHART_REPO := $(CHART_NAME)
 RELEASE_NAME := $(CHART_NAME)-$(shell echo $(CHART_VERSION) | sed -e 's/\./\-/g')
 REPO_URL := https://kubernetes.github.io/$(CHART_NAME)
-KUBE_CONTEXT := default
-KUBECONFIG ?= default
 INGRESS_FQDN := demo-ingress.ethzero.cloud
 TLS_KEY := tls.key
 TLS_CRT := tls.crt
+
+include ../../Makefile
 
 export INGRESS_FQDN
 
@@ -20,7 +20,7 @@ $(TLS_CRT): $(TLS_KEY)
 	openssl req -x509 -sha256 -nodes -days 1825 -new -key $^ \
 		-out $@ -subj "/CN=nginxsvc/O=nginxsvc"
 
-setup: $(CMCTL)
+setup: install_helm
 	@echo "Adding helm repo"
 	helm repo add $(CHART_REPO) $(REPO_URL)
 	helm repo update

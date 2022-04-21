@@ -33,7 +33,7 @@ data:
   vsphere.conf: |
     # Global properties in this section will be used for all specified vCenters unless overriden in VirtualCenter section.
     global:
-      port: 443
+      port: ${VCENTER_PORT}
       # set insecureFlag to true if the vCenter uses a self-signed cert
       insecureFlag: true
       # settings for using k8s secret
@@ -44,8 +44,6 @@ data:
     vcenter:
       ${VCENTER_NAME}:
         server: ${VCENTER_IP}
-        user: ${VCENTER_USER}
-        password: ${VCENTER_PASSWORD}
         datacenters:
           - ${DATACENTER_NAME}
 ---

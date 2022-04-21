@@ -8,12 +8,12 @@ REPO_URL   := https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/ma
 NFS_SERVER := 10.128.145.176
 NFS_PATH   := /var/nfsshare
 PROVISIONER_NAME := k8s.ethzero.cloud/nfs
-KUBE_CONTEXT := default
-KUBECONFIG ?= default
+
+include ../../Makefile
 
 export NFS_SERVER NFS_PATH PROVISIONER_NAME NFS_SUBDIR_PROVISIONER_IMAGE
 
-setup:
+setup: install_helm
 	helm repo add $(CHART_REPO) $(REPO_URL)
 	helm repo update
 
