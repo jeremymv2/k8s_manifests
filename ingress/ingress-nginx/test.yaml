@@ -19,11 +19,11 @@ spec:
         app: demo
     spec:
       containers:
-      - image: httpd
+      - image: jmv2/print-headers:0.0.3
         imagePullPolicy: Always
-        name: httpd
+        name: print-headers
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           protocol: TCP
         resources: {}
       dnsPolicy: ClusterFirst
@@ -43,7 +43,7 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-  type: ClusterIP
+      targetPort: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -54,6 +54,8 @@ metadata:
   namespace: default
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      real_ip_header X-Forwarded-For;
 spec:
   ingressClassName: nginx
   tls:
