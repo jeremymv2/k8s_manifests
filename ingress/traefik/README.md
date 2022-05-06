@@ -13,7 +13,7 @@ Ensure you are installing the [version](https://github.com/traefik/traefik-helm-
 Once decided, edit this line in the Makefile
 
 ```
-CHART_VERSION := 4.0.17
+CHART_VERSION := 10.19.5
 ```
 
 # Installation
