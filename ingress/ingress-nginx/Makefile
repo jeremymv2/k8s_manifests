@@ -43,7 +43,6 @@ apply: setup tls
 		in $(KUBECONFIG)"
 	helm template $(CHART_NAME) $(CHART_REPO)/$(CHART_NAME) \
 		--namespace $(NAMESPACE) \
-		--kube-context $(KUBE_CONTEXT) \
 		--version $(CHART_VERSION) \
 		--values values.yaml > $(RELEASE_NAME).yaml
 	kubectl -n $(NAMESPACE) apply -f $(RELEASE_NAME).yaml --context $(KUBE_CONTEXT) \
