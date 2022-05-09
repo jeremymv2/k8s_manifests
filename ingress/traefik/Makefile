@@ -1,5 +1,6 @@
 CHART_VERSION := 10.19.5
 CHART_NAME := traefik
+TRAEFIK_VERSION := 2.6.6
 NAMESPACE  := $(CHART_NAME)
 CHART_REPO := $(CHART_NAME)
 REPO_URL := https://helm.traefik.io/$(CHART_NAME)
@@ -33,7 +34,8 @@ apply: setup
 		--kubeconfig $(KUBECONFIG) \
 		--kube-context $(KUBE_CONTEXT) \
 		--version $(CHART_VERSION) \
-		--values values.yaml
+		--values values.yaml \
+	        --set "image.tag=$(TRAEFIK_VERSION)" --wait
 
 cleanup_test:
 	envsubst < test.yaml | kubectl -n default delete --context $(KUBE_CONTEXT) \
