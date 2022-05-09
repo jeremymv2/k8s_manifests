@@ -290,13 +290,12 @@ ports:
     # Override the liveness/readiness port. This is useful to integrate traefik
     # with an external Load Balancer that performs healthchecks.
     # healthchecksPort: 9000
+    # endpoint is /ping
 
     # Defines whether the port is exposed if service.type is LoadBalancer or
     # NodePort.
+    nodePort: 32090
     #
-    # You SHOULD NOT expose the traefik port on production deployments.
-    # If you want to access it from outside of your cluster,
-    # use `kubectl port-forward` or create a secure ingress
     expose: true
     # The exposed port for this service
     exposedPort: 9000
