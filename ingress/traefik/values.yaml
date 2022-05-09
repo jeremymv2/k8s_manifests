@@ -2,7 +2,7 @@
 image:
   name: traefik
   # defaults to appVersion
-  tag: ""
+  tag: 2.6.6
   pullPolicy: IfNotPresent
 
 #
@@ -11,9 +11,9 @@ image:
 deployment:
   enabled: true
   # Can be either Deployment or DaemonSet
-  kind: Deployment
+  kind: DaemonSet
   # Number of pods of the deployment (only applies when kind == Deployment)
-  replicas: 1
+  #replicas: 1
   # Amount of time (in seconds) before Kubernetes will send the SIGKILL signal if Traefik does not shut down
   terminationGracePeriodSeconds: 60
   # The minimum number of seconds Traefik needs to be up and running before the DaemonSet/Deployment controller considers it available
@@ -131,8 +131,8 @@ livenessProbe:
 providers:
   kubernetesCRD:
     enabled: true
-    allowCrossNamespace: false
-    allowExternalNameServices: false
+    allowCrossNamespace: true
+    allowExternalNameServices: true
     # ingressClass: traefik-internal
     # labelSelector: environment=production,method=traefik
     namespaces: []
@@ -140,8 +140,8 @@ providers:
 
   kubernetesIngress:
     enabled: true
-    allowExternalNameServices: false
-    allowEmptyServices: false
+    allowExternalNameServices: true
+    allowEmptyServices: true
     # ingressClass: traefik-internal
     # labelSelector: environment=production,method=traefik
     namespaces: []
@@ -238,9 +238,9 @@ tracing: {}
   #   globalTag: ""
   #   prioritySampling: false
 
-globalArguments:
-  - "--global.checknewversion"
-  - "--global.sendanonymoususage"
+globalArguments: []
+  #- "--global.checknewversion"
+  #- "--global.sendanonymoususage"
 
 #
 # Configure Traefik static configuration
@@ -297,7 +297,7 @@ ports:
     # You SHOULD NOT expose the traefik port on production deployments.
     # If you want to access it from outside of your cluster,
     # use `kubectl port-forward` or create a secure ingress
-    expose: false
+    expose: true
     # The exposed port for this service
     exposedPort: 9000
     # The port protocol (TCP/UDP)
@@ -311,7 +311,7 @@ ports:
     protocol: TCP
     # Use nodeport if set. This is useful if you have configured Traefik in a
     # LoadBalancer
-    # nodePort: 32080
+    nodePort: 32080
     # Port Redirections
     # Added in 2.2, you can make permanent redirects via entrypoints.
     # https://docs.traefik.io/routing/entrypoints/#redirection
@@ -323,7 +323,7 @@ ports:
     exposedPort: 443
     # The port protocol (TCP/UDP)
     protocol: TCP
-    # nodePort: 32443
+    nodePort: 32443
     # Enable HTTP/3.
     # Requires enabling experimental http3 feature and tls.
     # Note that you cannot have a UDP entrypoint with the same port.
@@ -349,9 +349,9 @@ ports:
     # You may not want to expose the metrics port on production deployments.
     # If you want to access it from outside of your cluster,
     # use `kubectl port-forward` or create a secure ingress
-    expose: true
+    expose: false
     # The exposed port for this service
-    exposedPort: 9110
+    exposedPort: 9100
     # The port protocol (TCP/UDP)
     protocol: TCP
 
@@ -372,7 +372,7 @@ tlsOptions: {}
 # from.
 service:
   enabled: true
-  type: LoadBalancer
+  type: NodePort
   # Additional annotations applied to both TCP and UDP services (e.g. for cloud provider specific config)
   annotations: {}
   # Additional annotations for TCP service only
@@ -383,8 +383,8 @@ service:
   labels: {}
   # Additional entries here will be added to the service spec.
   # Cannot contain type, selector or ports entries.
-  spec:
-    externalTrafficPolicy: Local
+  spec: {}
+    # externalTrafficPolicy: Cluster
     # loadBalancerIP: "1.2.3.4"
     # clusterIP: "2.3.4.5"
   loadBalancerSourceRanges: []
@@ -499,3 +499,4 @@ securityContext:
 
 podSecurityContext:
   fsGroup: 65532
+

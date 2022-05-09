@@ -39,7 +39,14 @@ cleanup_test:
 	envsubst < test.yaml | kubectl -n default delete --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f - || true
 
-test:
+get_node_ip:
+	@echo "Determining Node IP for NodePort"
+	$(eval NODE_HOST=$(shell kubectl --context $(KUBE_CONTEXT) \
+		--kubeconfig $(KUBECONFIG) \
+		get nodes -o \
+		jsonpath='{ $$.items[0].status.addresses[?(@.type=="InternalIP")].address }'))
+
+test: get_node_ip
 	envsubst < test.yaml | kubectl -n default apply --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f -
 	curl -i --silent --connect-timeout 5 \
@@ -49,4 +56,5 @@ test:
 		--retry 5 \
 		--retry-delay 0 \
 		--retry-max-time 40 \
-		http://$(TEST_INGRESS_FQDN)
+		http://$(NODE_HOST):32080 \
+		-H "Host: $(TEST_INGRESS_FQDN)"

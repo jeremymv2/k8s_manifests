@@ -24,13 +24,6 @@ make apply
 
 # Test
 
-Add a host entry to your hosts file on your workstation or add a DNS entry to point to the `LoadBalancer` IP
-of the ingress-nginx controller svc. Then edit this line in the Makefile to match:
-
-```
-TEST_INGRESS_FQDN := demo-ingress.tld
-```
-
 Then run the test:
 
 ```shell
