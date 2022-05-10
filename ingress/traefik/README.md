@@ -2,6 +2,8 @@
 
 The default configuration is for Traefik to be installed as a Daemonset on the master node(s) with a NodePort type service.
 
+# Pre-requisites
+
 ```shell
 make check
 ```
