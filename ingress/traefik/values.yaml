@@ -300,7 +300,7 @@ ports:
     # NodePort.
     nodePort: 32090
     #
-    expose: true
+    expose: false
     # The exposed port for this service
     exposedPort: 9000
     # The port protocol (TCP/UDP)
