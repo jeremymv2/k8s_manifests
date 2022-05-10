@@ -7,8 +7,9 @@ An external Load Balancer can then be configured to point to the following Ports
 |Port|Purpose|Endpoint|
 |---|---|---|
 |32080|http||
-|32443|https||
 |32090|healthcheck|/ping|
+|32091|prometheus|/metrics|
+|32443|https||
 
 # Pre-requisites
 
