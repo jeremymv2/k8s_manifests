@@ -247,9 +247,12 @@ globalArguments: []
 # Additional arguments to be passed at Traefik's binary
 # All available options available on https://docs.traefik.io/reference/static-configuration/cli/
 ## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
-additionalArguments: []
+additionalArguments:
 #  - "--providers.kubernetesingress.ingressclass=traefik-internal"
 #  - "--log.level=DEBUG"
+#  - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
+#  - "--entryPoints.web.forwardedHeaders.insecure=true"
+#  - "--entryPoints.websecure.forwardedHeaders.insecure=true"
 
 # Environment variables to be passed to Traefik's binary
 env: []
@@ -382,8 +385,8 @@ service:
   labels: {}
   # Additional entries here will be added to the service spec.
   # Cannot contain type, selector or ports entries.
-  spec: {}
-    # externalTrafficPolicy: Cluster
+  spec:
+    externalTrafficPolicy: Local
     # loadBalancerIP: "1.2.3.4"
     # clusterIP: "2.3.4.5"
   loadBalancerSourceRanges: []
