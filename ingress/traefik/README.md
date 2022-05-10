@@ -2,6 +2,14 @@
 
 The default configuration is for Traefik to be installed as a Daemonset on the master node(s) with a NodePort type service.
 
+An external Load Balancer can then be configured to point to the following Ports on the master nodes:
+
+|Port|Purpose|Endpoint|
+|---|---|---|
+|32080|http||
+|32443|https||
+|32090|healthcheck|/ping|
+
 # Pre-requisites
 
 ```shell
