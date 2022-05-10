@@ -1,5 +1,7 @@
 # Installs traefik ingress controller
 
+The default configuration is for Traefik to be installed as a Daemonset on the master node(s) with a NodePort type service.
+
 ```shell
 make check
 ```

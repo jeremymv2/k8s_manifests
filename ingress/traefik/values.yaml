@@ -253,6 +253,7 @@ additionalArguments:
 #  - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
 #  - "--entryPoints.web.forwardedHeaders.insecure=true"
 #  - "--entryPoints.websecure.forwardedHeaders.insecure=true"
+  - "--log.level=INFO"
 
 # Environment variables to be passed to Traefik's binary
 env: []
@@ -482,8 +483,14 @@ affinity: {}
 #               values:
 #                 - {{ template "traefik.name" . }}
 #         topologyKey: kubernetes.io/hostname
-nodeSelector: {}
-tolerations: []
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
 
 # Pods can have priority.
 # Priority indicates the importance of a Pod relative to other Pods.
