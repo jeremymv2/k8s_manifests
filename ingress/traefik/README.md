@@ -14,10 +14,11 @@ If needed, you can install the latest version of helm with `make install_helm`
 
 Ensure you are installing the [version](https://github.com/traefik/traefik-helm-chart/tags) of the [chart](https://github.com/traefik/traefik-helm-chart) that suits your needs.
 
-Once decided, edit this line in the Makefile
+Once decided, edit these lines in the Makefile
 
 ```
 CHART_VERSION := 10.19.5
+TRAEFIK_VERSION := 2.6.6
 ```
 
 # Installation
