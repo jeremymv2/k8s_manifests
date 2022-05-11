@@ -73,3 +73,6 @@ spec:
       middlewares:
         - name: response-code-check
           namespace: default
+  #tls:
+    #store:
+      #name: default

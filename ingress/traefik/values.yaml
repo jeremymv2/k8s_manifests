@@ -249,10 +249,9 @@ globalArguments: []
 ## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
 additionalArguments:
 #  - "--providers.kubernetesingress.ingressclass=traefik-internal"
-#  - "--log.level=DEBUG"
 #  - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
-#  - "--entryPoints.web.forwardedHeaders.insecure=true"
-#  - "--entryPoints.websecure.forwardedHeaders.insecure=true"
+#  - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
+  - "--entryPoints.ping.address=:32080"
   - "--log.level=INFO"
 
 # Environment variables to be passed to Traefik's binary
@@ -294,12 +293,13 @@ ports:
     # Override the liveness/readiness port. This is useful to integrate traefik
     # with an external Load Balancer that performs healthchecks.
     # healthchecksPort: 9000
-    # endpoint is /ping
 
     # Defines whether the port is exposed if service.type is LoadBalancer or
     # NodePort.
     nodePort: 32090
     #
+    # Typically you would not want to expose this unless you could secure access to the port
+    # at the transport layer in line with principle of least privilege.
     expose: false
     # The exposed port for this service
     exposedPort: 9000
