@@ -253,6 +253,7 @@ additionalArguments:
 #  - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
 #  - "--entryPoints.web.forwardedHeaders.insecure=true"
 #  - "--entryPoints.websecure.forwardedHeaders.insecure=true"
+#  - "--entryPoints.ping.address=:32090"
   - "--log.level=INFO"
 
 # Environment variables to be passed to Traefik's binary
@@ -299,7 +300,7 @@ ports:
     # Defines whether the port is exposed if service.type is LoadBalancer or
     # NodePort.
     nodePort: 32090
-    #
+    # Set to true along with uncommenting ping entryPoint above to expose a health monitor port
     expose: false
     # The exposed port for this service
     exposedPort: 9000

@@ -53,10 +53,22 @@ test: get_master_ip
 		--kubeconfig $(KUBECONFIG) -f -
 	curl -i --silent --connect-timeout 5 \
 		--fail \
-		--retry-all-errors \
 		--max-time 10 \
 		--retry 5 \
 		--retry-delay 0 \
 		--retry-max-time 40 \
 		http://$(NODE_HOST):32080 \
+		-H "Host: $(TEST_INGRESS_FQDN)"
+
+tlstest: get_master_ip
+	envsubst < test.yaml | kubectl -n default apply --context $(KUBE_CONTEXT) \
+		--kubeconfig $(KUBECONFIG) -f -
+	curl -i --silent --connect-timeout 5 \
+		--fail \
+        --insecure \
+		--max-time 10 \
+		--retry 5 \
+		--retry-delay 0 \
+		--retry-max-time 40 \
+		https://$(NODE_HOST):32080 \
 		-H "Host: $(TEST_INGRESS_FQDN)"

@@ -73,3 +73,27 @@ spec:
       middlewares:
         - name: response-code-check
           namespace: default
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  labels:
+    app: demo
+  name: demo-secure
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`${TEST_INGRESS_FQDN}`)
+      services:
+        - name: demo
+          namespace: default
+          port: 80
+      middlewares:
+        - name: response-code-check
+          namespace: default
+  tls:
+    store:
+      name: default
