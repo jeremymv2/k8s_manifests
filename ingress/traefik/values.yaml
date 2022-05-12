@@ -251,6 +251,8 @@ additionalArguments:
 #  - "--providers.kubernetesingress.ingressclass=traefik-internal"
 #  - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
 #  - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
+#  - "--entryPoints.websecure.forwardedHeaders.insecure=true"
+#  - "--entryPoints.web.forwardedHeaders.insecure=true"
   - "--entryPoints.ping.address=:32080"
   - "--log.level=INFO"
 
@@ -297,7 +299,6 @@ ports:
     # Defines whether the port is exposed if service.type is LoadBalancer or
     # NodePort.
     nodePort: 32090
-    #
     # Typically you would not want to expose this unless you could secure access to the port
     # at the transport layer in line with principle of least privilege.
     expose: false

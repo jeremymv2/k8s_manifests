@@ -59,6 +59,21 @@ test: get_master_ip
 		--retry-delay 0 \
 		--retry-max-time 40 \
 		http://$(NODE_HOST):32080 \
+		-H "Host: $(TEST_INGRESS_FQDN)"
+	done
+  
+tlstest: get_master_ip
+	envsubst < test.yaml | kubectl -n default apply --context $(KUBE_CONTEXT) \
+		--kubeconfig $(KUBECONFIG) -f -
+	for i in {1..5}; do \
+		curl -i --silent --connect-timeout 5 \
+		--fail \
+		--insecure \
+		--max-time 10 \
+		--retry 5 \
+		--retry-delay 0 \
+		--retry-max-time 40 \
+		https://$(NODE_HOST):32443 \
 		-H "Host: $(TEST_INGRESS_FQDN)" || true ; \
 		sleep 2 ; \
 	done
