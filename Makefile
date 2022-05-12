@@ -17,4 +17,8 @@ check:
 
 install_helm:
 	@echo "Installing helm"
-	curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+	@if [ $$(which helm) ]; then \
+		echo "Helm already installed"; \
+	else \
+		curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
+	fi
