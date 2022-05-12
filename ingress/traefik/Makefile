@@ -59,9 +59,10 @@ test: get_master_ip
 		--retry-delay 0 \
 		--retry-max-time 40 \
 		http://$(NODE_HOST):32080 \
-		-H "Host: $(TEST_INGRESS_FQDN)"
+		-H "Host: $(TEST_INGRESS_FQDN)" || true ; \
+		sleep 2 ; \
 	done
-  
+
 tlstest: get_master_ip
 	envsubst < test.yaml | kubectl -n default apply --context $(KUBE_CONTEXT) \
 		--kubeconfig $(KUBECONFIG) -f -
