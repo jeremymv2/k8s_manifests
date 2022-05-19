@@ -14,3 +14,7 @@ spec:
       destination:
         nets:
           - "8.8.8.8/32"
+    - action: Allow
+      destination:
+        nets:
+          - "0.0.0.0/0"

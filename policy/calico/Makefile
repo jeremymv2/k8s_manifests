@@ -29,8 +29,20 @@ apply: $(CALICOCTL) $(CALICOCFG)
 		--config $(CALICOCFG)
 
 test:
-	@echo "Pinging 8.8.8.8 - should work only for production namespace"
-	@echo "==========================================================="
+	@echo "Pinging 8.8.4.4 - should work from both namespaces"
+	@echo "=================================================="
+	for ns in production development; do \
+		echo "Running in $${ns} namespace" ; \
+		kubectl run tmp-shell \
+        		--restart=Never --rm -i --tty \
+        		--image nicolaka/netshoot -n $${ns} \
+        		--context $(KUBE_CONTEXT) \
+        		--kubeconfig $(KUBECONFIG) \
+        		-- bash -c "ping -v -c 5 8.8.4.4 || true" ; \
+		echo ; \
+	done
+	@echo "Pinging 8.8.8.8 - should work ONLY from production namespace"
+	@echo "============================================================"
 	for ns in production development; do \
 		echo "Running in $${ns} namespace" ; \
 		kubectl run tmp-shell \
