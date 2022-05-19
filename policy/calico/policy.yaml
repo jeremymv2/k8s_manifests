@@ -1,0 +1,16 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: restrict-development-egress
+spec:
+  selector: projectcalico.org/namespace in  {'development'}
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+  egress:
+    - action: Deny
+      destination:
+        nets:
+          - "8.8.8.8/32"
