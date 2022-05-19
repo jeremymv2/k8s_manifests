@@ -253,6 +253,7 @@ additionalArguments:
 #  - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32,10.42.0.0/16"
 #  - "--entryPoints.websecure.forwardedHeaders.insecure=true"
 #  - "--entryPoints.web.forwardedHeaders.insecure=true"
+  - "--serversTransport.insecureSkipVerify=true"
   - "--entryPoints.ping.address=:32080"
   - "--log.level=INFO"
 
