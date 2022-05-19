@@ -1,6 +1,6 @@
 # Installs Calico GlobalNetworkPolicy
 
-This is an example Calico GlobalNetworkPolicy that disallows egress traffic to 8.8.8.8 for any
+This is an example Calico GlobalNetworkPolicy that disallows any egress traffic to 8.8.8.8 for any
 PODs in the "development" environment.
 
 Calico Docs
@@ -21,11 +21,9 @@ make apply
 
 # Test
 
-Then run the test:
+The test spins up a pod in the production and development namespaces and sends ICMP pings to 8.8.8.8
+As expected, only pings from the production namespace POD will be received back.
 
-```shell
-make test
-```
 
 ```shell
 17:35 $ make test
