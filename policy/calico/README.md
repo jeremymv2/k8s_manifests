@@ -1,7 +1,7 @@
 # Installs Calico GlobalNetworkPolicy
 
-This is an example Calico GlobalNetworkPolicy that disallows any egress traffic to 8.8.8.8 for any
-PODs in the "development" environment.
+This is an example Calico GlobalNetworkPolicy that disallows any egress traffic to 8.8.8.8/32 for any
+PODs in the development namespace.
 
 Calico Docs
 - [Getting Started](https://projectcalico.docs.tigera.io/security/calico-network-policy)
