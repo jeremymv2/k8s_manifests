@@ -28,3 +28,21 @@ export KUBECONFIG=~/Downloads/cluster-name.yaml
 ```shell
 make containerdisk-demo
 ```
+
+## Watch progress
+
+```shell
+make watch
+```
+
+## Console access
+
+```shell
+VM=ubuntu-vm make console
+```
+
+## SSH
+
+```shell
+ssh -i ~/.ssh/id_ed25519 ubuntu@x.x.x.x
+```
