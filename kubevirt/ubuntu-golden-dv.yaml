@@ -1,0 +1,15 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: "ubuntu-golden-dv"
+spec:
+  source:
+    http:
+      url: "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    storageClassName: ${STORAGE_CLASS_NAME}

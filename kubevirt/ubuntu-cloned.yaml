@@ -1,0 +1,67 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: ubuntu-clone-dv
+spec:
+  source:
+    pvc:
+      namespace: cdi
+      name: ubuntu-golden-dv
+  pvc:
+    storageClassName: ${STORAGE_CLASS_NAME}
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  labels:
+    kubevirt.io/vm: ubuntu-cloned
+  name: ubuntu-cloned
+spec:
+  #runStrategy: Manual
+  running: true
+  template:
+    metadata:
+      labels: {}
+    spec:
+      domain:
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
+          disks:
+            - name: volume-1
+              disk:
+                bus: virtio
+            - name: cloudinit
+              disk:
+                bus: virtio
+        machine:
+          type: ""
+        cpu:
+          cores: 1
+        resources:
+          requests:
+            memory: 2G
+      networks:
+        - name: default
+          pod: {}
+      terminationGracePeriodSeconds: 0
+      volumes:
+        - name: volume-1
+          dataVolume:
+            name: ubuntu-clone-dv
+        - name: cloudinit
+          cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              password: winterwonderland
+              ssh_pwauth: True
+              manage_etc_hosts: true
+              chpasswd: { expire: False }
+              ssh_authorized_keys:
+                - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01

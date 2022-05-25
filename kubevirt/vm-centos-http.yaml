@@ -1,0 +1,58 @@
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  labels:
+    kubevirt.io/vm: vm-node-1
+  name: vm-node-1
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      name: vm-node-1-dv
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10G
+        storageClassName: ${STORAGE_CLASS_NAME}
+      source:
+        http:
+          url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: vm-node-1
+    spec:
+      domain:
+        cpu:
+          cores: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: datavolumevolume
+          - disk:
+              bus: virtio
+            name: cloudinit
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 2G
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - dataVolume:
+          name: vm-node-1-dv
+        name: datavolumevolume
+      - cloudInitNoCloud:
+          userData: |-
+            #cloud-config
+            password: winterwonderland
+            ssh_pwauth: True
+            manage_etc_hosts: true
+            chpasswd: { expire: False }
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
+        name: cloudinit
