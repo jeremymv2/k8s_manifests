@@ -15,7 +15,7 @@ ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/id_ed25519
 
 ## Set up environment
 
-Change the `PUB_SSH_KEY` in the Makefile
+Change the `PUB_SSH_KEY` in the Makefile, utilizing the public key from above
 
 export your KUBECONFIG environment variable
 
