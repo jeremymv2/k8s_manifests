@@ -3,7 +3,7 @@
 ## Install krew kubectl plugin
 
 ```shell
-make install_krew
+make install-krew
 make install-krew-virt
 ```
 
