@@ -1,6 +1,7 @@
 NAMESPACE  := cdi
-PUB_SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
-STORAGE_CLASS_NAME := nfs-client
+PUB_SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICSkMgT4PfvnL88E53bNt8RxnXRiiFeXyZGnQbw/E36K root@jmiller662503
+STORAGE_CLASS_NAME := local-path
+SECONDARY_NIC := ens3
 VM ?= undef
 
 export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY
@@ -19,23 +20,25 @@ install-krew-virt: check-krew
 	kubectl krew update
 	kubectl krew install virt
 
-destroy-containerdisk-demo:
-	@echo "Deleting containerdisk demo from namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
-	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml | kubectl delete \
-		--kubeconfig $(KUBECONFIG) \
-		--context $(KUBE_CONTEXT) \
-		--namespace $(NAMESPACE) \
-		-f -
-
 containerdisk-demo:
 	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml
 	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
 		-f -
 
+destroy-containerdisk-demo:
+	@echo "Deleting containerdisk demo from namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f - || true
+
 centos-golden-dv:
+	envsubst < centos-golden-dv.yaml
 	envsubst < centos-golden-dv.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -47,9 +50,10 @@ destroy-centos-golden-dv:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
-		-f -
+		-f - || true
 
 centos-cloned:
+	envsubst < centos-cloned.yaml
 	envsubst < centos-cloned.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -61,9 +65,10 @@ destroy-centos-cloned:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
-		-f -
+		-f - || true
 
 ubuntu-golden-dv:
+	envsubst < ubuntu-golden-dv.yaml
 	envsubst < ubuntu-golden-dv.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -75,9 +80,10 @@ destroy-ubuntu-golden-dv:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
-		-f -
+		-f - || true
 
 ubuntu-cloned:
+	envsubst < ubuntu-cloned.yaml
 	envsubst < ubuntu-cloned.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -89,9 +95,10 @@ destroy-ubuntu-cloned:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
-		-f -
+		-f - || true
 
 ubuntu-source-http:
+	envsubst < vm-ubuntu-http.yaml
 	envsubst < vm-ubuntu-http.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -103,9 +110,10 @@ destroy-ubuntu-source-http:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
-		-f -
+		-f - || true
 
 centos-source-http:
+	envsubst < vm-centos-http.yaml
 	envsubst < vm-centos-http.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -117,6 +125,31 @@ destroy-centos-source-http:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
+		-f - || true
+
+local-storage:
+	kubectl apply -f local-storage-provisioner.yaml \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT)
+
+destroy-local-storage:
+	kubectl delete -f local-storage-provisioner.yaml \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT)
+
+luigi:
+	envsubst < luigi.yaml
+	envsubst < luigi.yaml | kubectl apply \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace luigi-system \
+		-f -
+
+destroy-luigi:
+	envsubst < luigi.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace luigi-system \
 		-f -
 
 watch:
@@ -135,3 +168,8 @@ endif
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE)
+
+destroy-all:
+	$(MAKE) destroy-containerdisk-demo destroy-centos-golden-dv destroy-centos-cloned \
+		destroy-ubuntu-golden-dv destroy-ubuntu-cloned destroy-ubuntu-source-http \
+		destroy-centos-source-http destroy-local-storage destroy-luigi

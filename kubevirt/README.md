@@ -15,7 +15,20 @@ ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/id_ed25519
 
 ## Set up environment
 
-Change the `PUB_SSH_KEY` in the Makefile, utilizing the public key from above
+If you do not have a StorageClass already configured you can
+use the local-path provisioner:
+
+```
+make local-storage
+```
+
+Change the following in the Makefile
+Keep `local-path` if using the local path provisioner above.
+
+```
+PUB_SSH_KEY :=
+STORAGE_CLASS_NAME :=
+```
 
 export your KUBECONFIG environment variable
 
@@ -23,7 +36,7 @@ export your KUBECONFIG environment variable
 export KUBECONFIG=~/Downloads/cluster-name.yaml
 ```
 
-## Start up an ubuntu vm instance
+## Create a VM with ephemeral disk
 
 ```shell
 make containerdisk-demo
@@ -41,10 +54,29 @@ make watch
 VM=ubuntu-vm make get-console
 ```
 
-## SSH
+## ssh
 
 From the cluster node where you created an ssh key run:
 
 ```shell
 ssh -i ~/.ssh/id_ed25519 ubuntu@x.x.x.x
+```
+
+## Cleanup
+
+```
+make destroy-all
+```
+
+## Create a VM from a Cloned Golden Image DataVolume
+
+```
+make centos-golden-dv
+make centos-cloned
+```
+
+## Create a VM from HTTP disk image source and a dynamically created DataVolume
+
+```
+make centos-source-http
 ```

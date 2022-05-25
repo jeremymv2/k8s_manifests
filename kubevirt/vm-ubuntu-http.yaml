@@ -54,5 +54,5 @@ spec:
             manage_etc_hosts: true
             chpasswd: { expire: False }
             ssh_authorized_keys:
-              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
+              - ${PUB_SSH_KEY}
         name: cloudinit
