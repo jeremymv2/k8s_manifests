@@ -126,7 +126,7 @@ watch:
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE)
 
-console:
+get-console:
 ifeq ($(VM),undef)
 	@echo "Specify the VM name. ie. \`VM=ubuntu-vm make console\`"
 	exit 1

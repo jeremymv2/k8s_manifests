@@ -38,7 +38,7 @@ make watch
 ## Console access
 
 ```shell
-VM=ubuntu-vm make console
+VM=ubuntu-vm make get-console
 ```
 
 ## SSH
