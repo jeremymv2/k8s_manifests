@@ -12,6 +12,11 @@ The `Makefile` here pretty much takes care of the installation of all the K8s co
 make check
 ```
 
+Export an NFS share as such:
+```
+/srv/nfs/kubedata/ *(rw,async,no_subtree_check,no_root_squash,insecure)
+```
+
 # Setup
 
 Edit the `Makefile` in this directory and change these lines as needed:
