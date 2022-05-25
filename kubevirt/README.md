@@ -43,6 +43,8 @@ VM=ubuntu-vm make console
 
 ## SSH
 
+From the cluster node where you created an ssh key run:
+
 ```shell
 ssh -i ~/.ssh/id_ed25519 ubuntu@x.x.x.x
 ```
