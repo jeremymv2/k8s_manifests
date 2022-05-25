@@ -4,9 +4,6 @@
 
 ```shell
 make install_krew
-```
-
-```shell
 make install-krew-virt
 ```
 
@@ -16,9 +13,15 @@ make install-krew-virt
 ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/id_ed25519
 ```
 
-## Edit Makefile
+## Set up environment
 
 Change the `PUB_SSH_KEY` in the Makefile
+
+export your KUBECONFIG environment variable
+
+```shell
+export KUBECONFIG=~/Downloads/cluster-name.yaml
+```
 
 ## Start up an ubuntu vm instance
 
