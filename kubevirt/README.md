@@ -1,6 +1,6 @@
 # Kubevirt
 
-## Install krew kubectl plugin
+## Install krew and virt kubectl plugin
 
 ```shell
 make install-krew
