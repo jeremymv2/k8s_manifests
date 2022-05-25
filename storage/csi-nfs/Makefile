@@ -11,7 +11,7 @@ STORAGE_CLASS_NAME := nfs-client
 ARCHIVE_ON_DELETE_BOOL := false
 ACCESS_MODE := ReadWriteMany
 NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev,nofail
-VOLUME_BINDING_MODE := WaitForFirstConsumer
+VOLUME_BINDING_MODE := Immediate
 
 export NAMESPACE STORAGE_CLASS_NAME NFS_MOUNT_OPTIONS
 
@@ -44,7 +44,7 @@ apply: setup
     		--set storageClass.archiveOnDelete=$(ARCHIVE_ON_DELETE_BOOL) \
     		--set storageClass.accessModes=$(ACCESS_MODE) \
 		> $(RELEASE_NAME).yaml
-	sed -i.bak -e "s/\(reclaimPolicy: .*\)/\1\nvolumeBindingMode: WaitForFirstConsumer/" $(RELEASE_NAME).yaml
+	sed -i.bak -e "s/\(reclaimPolicy: .*\)/\1\nvolumeBindingMode: $(VOLUME_BINDING_MODE)/" $(RELEASE_NAME).yaml
 	rm $(RELEASE_NAME).yaml.bak
 	kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
