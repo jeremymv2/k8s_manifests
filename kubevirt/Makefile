@@ -7,15 +7,15 @@ export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY
 
 include ../Makefile
 
-install_crew:
+install-crew:
 	bash -c ./install_krew.sh
 
-check_krew:
+check-krew:
 	@echo "Checking if krew and virt plugin are installed"
 	@echo "https://krew.sigs.k8s.io/docs/user-guide/setup/install/"
 	kubectl krew
 
-install-krew-virt: check_krew
+install-krew-virt: check-krew
 	kubectl krew update
 	kubectl krew install virt
 
