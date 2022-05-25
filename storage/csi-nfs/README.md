@@ -29,6 +29,8 @@ NFS_PATH :=
 STORAGE_CLASS_NAME :=
 ARCHIVE_ON_DELETE_BOOL :=
 ACCESS_MODE :=
+NFS_MOUNT_OPTIONS :=
+VOLUME_BINDING_MODE :=
 ```
 
 Export the KUBECONFIG environment variable, pointing to the PMK cluster's kubeconfig.yaml
