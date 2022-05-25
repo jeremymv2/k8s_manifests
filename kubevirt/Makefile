@@ -20,7 +20,7 @@ install-krew-virt: check-krew
 	kubectl krew update
 	kubectl krew install virt
 
-containerdisk-demo:
+containerdisk-demo-ubuntu:
 	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml
 	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml | kubectl apply \
@@ -29,9 +29,26 @@ containerdisk-demo:
 		--namespace $(NAMESPACE) \
 		-f -
 
-destroy-containerdisk-demo:
+destroy-containerdisk-demo-ubuntu:
 	@echo "Deleting containerdisk demo from namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f - || true
+
+containerdisk-demo-fedora:
+	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	envsubst < vmi-fedora-containerdisk-emptydisk.yaml
+	envsubst < vmi-fedora-containerdisk-emptydisk.yaml | kubectl apply \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f -
+
+destroy-containerdisk-demo-fedora:
+	@echo "Deleting containerdisk demo from namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	envsubst < vmi-fedora-containerdisk-emptydisk.yaml | kubectl delete \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
@@ -170,6 +187,6 @@ endif
 		--namespace $(NAMESPACE)
 
 destroy-all:
-	$(MAKE) destroy-containerdisk-demo destroy-centos-golden-dv destroy-centos-cloned \
+	$(MAKE) destroy-containerdisk-demo-ubuntu destroy-centos-golden-dv destroy-centos-cloned \
 		destroy-ubuntu-golden-dv destroy-ubuntu-cloned destroy-ubuntu-source-http \
-		destroy-centos-source-http destroy-local-storage destroy-luigi
+		destroy-centos-source-http destroy-local-storage destroy-luigi destroy-containerdisk-demo-fedora

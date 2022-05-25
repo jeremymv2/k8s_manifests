@@ -39,7 +39,7 @@ export KUBECONFIG=~/Downloads/cluster-name.yaml
 ## Create a VM with ephemeral disk
 
 ```shell
-make containerdisk-demo
+make containerdisk-demo-fedora
 ```
 
 ## Watch progress
@@ -51,7 +51,7 @@ make watch
 ## Console access
 
 ```shell
-VM=ubuntu-vm make get-console
+VM=fedora-vm make get-console
 ```
 
 ## ssh
@@ -59,7 +59,7 @@ VM=ubuntu-vm make get-console
 From the cluster node where you created an ssh key run:
 
 ```shell
-ssh -i ~/.ssh/id_ed25519 ubuntu@x.x.x.x
+ssh -i ~/.ssh/id_ed25519 fedora@x.x.x.x
 ```
 
 ## Cleanup
