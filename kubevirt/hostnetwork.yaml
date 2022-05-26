@@ -1,0 +1,8 @@
+apiVersion: plumber.k8s.pf9.io/v1
+kind: HostNetworkTemplate
+metadata:
+  name: hostconfig-net
+spec:
+  ovsConfig:
+  - bridgeName: ovs-br01
+    nodeInterface: ${SECONDARY_NIC}

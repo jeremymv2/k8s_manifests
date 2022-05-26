@@ -1,10 +1,10 @@
 NAMESPACE  := cdi
 PUB_SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICSkMgT4PfvnL88E53bNt8RxnXRiiFeXyZGnQbw/E36K root@jmiller662503
 STORAGE_CLASS_NAME := local-path
-SECONDARY_NIC := ens3
+SECONDARY_NIC := ens7
 VM ?= undef
 
-export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY
+export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY SECONDARY_NIC
 
 include ../Makefile
 
@@ -154,16 +154,28 @@ destroy-local-storage:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT)
 
-luigi:
-	envsubst < luigi.yaml
-	envsubst < luigi.yaml | kubectl apply \
+hostnetwork:
+	cat networkplugins.yaml
+	kubectl apply \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace luigi-system \
+		-f networkplugins.yaml
+	sleep 10
+	envsubst < hostnetwork.yaml
+	envsubst < hostnetwork.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace luigi-system \
 		-f -
 
-destroy-luigi:
-	envsubst < luigi.yaml | kubectl delete \
+destroy-hostnetwork:
+	kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace luigi-system \
+		-f networkplugins.yaml
+	envsubst < hostnetwork.yaml | kubectl delete \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace luigi-system \
@@ -189,4 +201,4 @@ endif
 destroy-all:
 	$(MAKE) destroy-containerdisk-demo-ubuntu destroy-centos-golden-dv destroy-centos-cloned \
 		destroy-ubuntu-golden-dv destroy-ubuntu-cloned destroy-ubuntu-source-http \
-		destroy-centos-source-http destroy-local-storage destroy-luigi destroy-containerdisk-demo-fedora
+		destroy-centos-source-http destroy-local-storage destroy-hostnetwork destroy-containerdisk-demo-fedora

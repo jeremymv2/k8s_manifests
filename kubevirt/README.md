@@ -1,5 +1,11 @@
 # Kubevirt
 
+## Pre-requisites
+
+It is required to have the Luigi and Kubevirt Add-ons enabled:
+
+`kubevirt`, `luigi`
+
 ## Install krew and virt kubectl plugin
 
 ```shell
@@ -79,4 +85,12 @@ make centos-cloned
 
 ```
 make centos-source-http
+```
+
+## Configure Secondary Network for Direct VM Access
+
+Ensure that you have `SECONDARY_NIC` set correctly in the Makefile
+
+```shell
+make hostnetwork
 ```
