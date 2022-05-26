@@ -30,7 +30,7 @@ spec:
     cloudInitNoCloud:
       userData: |-
         #cloud-config
-        password: winterwonderland
+        password: ubuntu123
         ssh_pwauth: True
         manage_etc_hosts: true
         chpasswd: { expire: False }

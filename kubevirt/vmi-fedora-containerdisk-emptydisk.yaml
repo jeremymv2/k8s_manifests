@@ -30,5 +30,9 @@ spec:
     cloudInitNoCloud:
       userData: |-
         #cloud-config
-        password: fedora
+        password: fedora123
+        ssh_pwauth: True
+        manage_etc_hosts: true
         chpasswd: { expire: False }
+        ssh_authorized_keys:
+          - ${PUB_SSH_KEY}
