@@ -42,6 +42,12 @@ export your KUBECONFIG environment variable
 export KUBECONFIG=~/Downloads/cluster-name.yaml
 ```
 
+## Create the namespace for the virtual machines
+
+```shell
+make namespace
+```
+
 ## Create a VM with ephemeral disk
 
 ```shell

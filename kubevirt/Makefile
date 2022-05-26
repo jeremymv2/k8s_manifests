@@ -1,4 +1,4 @@
-NAMESPACE  := cdi
+NAMESPACE  := virtualmachines
 PUB_SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
 STORAGE_CLASS_NAME := local-path
 SECONDARY_NIC := ens7
@@ -19,6 +19,19 @@ check-krew:
 install-krew-virt: check-krew
 	kubectl krew update
 	kubectl krew install virt
+
+namespace:
+	envsubst < namespace.yaml
+	envsubst < namespace.yaml | kubectl apply \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		-f -
+
+destroy-namespace:
+	envsubst < namespace.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		-f -
 
 containerdisk-demo-ubuntu:
 	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
@@ -201,4 +214,5 @@ endif
 destroy-all:
 	$(MAKE) destroy-containerdisk-demo-ubuntu destroy-centos-golden-dv destroy-centos-cloned \
 		destroy-ubuntu-golden-dv destroy-ubuntu-cloned destroy-ubuntu-source-http \
-		destroy-centos-source-http destroy-local-storage destroy-hostnetwork destroy-containerdisk-demo-fedora
+		destroy-centos-source-http destroy-local-storage destroy-hostnetwork \
+		destroy-containerdisk-demo-fedora destroy-namespace
