@@ -32,6 +32,7 @@ Change the following in the Makefile
 Keep `local-path` if using the local path provisioner above.
 
 ```
+NAMESPACE :=
 PUB_SSH_KEY :=
 STORAGE_CLASS_NAME :=
 ```
