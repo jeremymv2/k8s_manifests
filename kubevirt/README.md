@@ -62,7 +62,9 @@ Alternatively, console into the vm from one of the cluster nodes
 /opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm -n virtualmachines
 ```
 
-### Variation of quickstart with VM node registering to control plane and joining an existing cluster.
+### Variation of quickstart
+
+In this variation, we have the VM node registering to control plane and joining an existing cluster.
 
 Edit the `admin.rc` file and fill out the DU portion, then source the file again.
 
@@ -75,6 +77,45 @@ Watch the cloud init logs
 
 ```shell
 ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
+```
+
+```
+Installing Platform9 CLI...
+
+Platform9 CLI installation completed successfully !
+
+To start building a Kubernetes cluster execute:
+        pf9ctl help
+
+✓ Stored configuration details successfully
+✓ Loaded Config Successfully
+✓ Missing package(s) installed successfully
+✓ Removal of existing CLI
+✓ Existing Platform9 Packages Check
+✓ Required OS Packages Check
+✓ SudoCheck
+! CPUCheck - At least 2 CPUs are needed on host. Number of CPUs found: 1
+! DiskCheck - At least 30 GB of total disk space and 15 GB of free space is needed on host. Disk Space found: 2 GB
+! MemoryCheck - At least 12 GB of memory is needed on host. Total memory found: 4 GB
+✓ PortCheck
+✓ Existing Kubernetes Cluster Check
+✓ Check lock on dpkg
+✓ Check lock on apt
+✓ Check if system is booted with systemd
+✓ Check time synchronization
+✓ Check if firewalld service is not running
+✓ Disabling swap and removing swap in fstab
+
+✓ Completed Pre-Requisite Checks successfully
+
+
+Proceeding for prep-node with failed optional check(s)
+✓ Platform9 packages installed successfully
+✓ Initialised host successfully
+✓ Host successfully attached to the Platform9 control-plane
+✓ Loaded Config Successfully
+Attaching node to the cluster k8s-calico
+2022-05-27T16:25:02.752Z        INFO    Worker node(s) [e4ae4979-1ce2-4f11-8de7-9da57ee6b27f] attached to cluster
 ```
 
 Cleanup the demo instances
@@ -105,14 +146,7 @@ Change the following in the Makefile
 Keep `local-path` if using the local path provisioner above.
 
 ```
-NAMESPACE :=
-PUB_SSH_KEY :=
 STORAGE_CLASS_NAME :=
-```
-
-
-```shell
-make setup
 ```
 
 ## Create a VM with ephemeral disk
@@ -131,14 +165,6 @@ make watch
 
 ```shell
 VM=fedora-vm make get-console
-```
-
-## ssh
-
-From the cluster node where you created an ssh key run:
-
-```shell
-ssh -i ~/.ssh/id_ed25519 fedora@x.x.x.x
 ```
 
 ## Cleanup

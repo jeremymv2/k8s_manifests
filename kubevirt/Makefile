@@ -244,4 +244,4 @@ destroy-all:
 	$(MAKE) destroy-containerdisk-demo-ubuntu destroy-centos-golden-dv destroy-centos-cloned \
 		destroy-ubuntu-golden-dv destroy-ubuntu-cloned destroy-ubuntu-source-http \
 		destroy-centos-source-http destroy-local-storage destroy-hostnetwork \
-		destroy-containerdisk-demo-fedora destroy-namespace
+		destroy-containerdisk-demo-fedora destroy-namespace destroy-quickstart-demo
