@@ -40,6 +40,9 @@ spec:
           - content: |
               #!/bin/bash
               setenforce 0 || true
+              mkfs.ext4 /dev/vdb
+              mkdir -p /opt
+              mount /dev/vdb /opt
               curl -sL https://pmkft-assets.s3-us-west-1.amazonaws.com/pf9ctl_setup -o- | bash >/tmp/cloudinit.log 2>&1
               pf9ctl config set -u "${DDU_URL}" -e "${ADMIN_USER_LOGIN}" -p "${ADMIN_USER_PASSWORD}" -t "${SERVICE}" -r "${REGION}" --no-prompt >>/tmp/cloudinit.log 2>&1
               nice -5 pf9ctl prep-node --skip-checks --no-prompt >>/tmp/cloudinit.log 2>&1

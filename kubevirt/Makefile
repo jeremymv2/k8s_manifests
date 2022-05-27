@@ -58,7 +58,9 @@ quickstart-demo: setup containerdisk-demo-ubuntu
 
 containerdisk-demo-ubuntu-join-cluster:
 	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	@echo "======= MANIFEST ======="
 	envsubst < vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml
+	@echo "======= KUBECTL ======="
 	envsubst < vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
