@@ -194,7 +194,7 @@ local-storage:
 destroy-local-storage:
 	kubectl delete -f local-storage-provisioner.yaml \
 		--kubeconfig $(KUBECONFIG) \
-		--context $(KUBE_CONTEXT)
+		--context $(KUBE_CONTEXT) || true
 
 hostnetwork:
 	cat networkplugins.yaml
@@ -240,8 +240,8 @@ endif
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE)
 
-destroy-all:
+destroy:
 	$(MAKE) destroy-containerdisk-demo-ubuntu destroy-centos-golden-dv destroy-centos-cloned \
 		destroy-ubuntu-golden-dv destroy-ubuntu-cloned destroy-ubuntu-source-http \
-		destroy-centos-source-http destroy-local-storage destroy-hostnetwork \
-		destroy-containerdisk-demo-fedora destroy-namespace destroy-quickstart-demo
+		destroy-centos-source-http destroy-local-storage \
+		destroy-containerdisk-demo-fedora destroy-quickstart-demo

@@ -170,7 +170,7 @@ VM=fedora-vm make get-console
 ## Cleanup
 
 ```
-make destroy-all
+make destroy
 ```
 
 ## Create a VM from a Cloned Golden Image DataVolume
