@@ -79,6 +79,8 @@ Watch the cloud init logs
 ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
 ```
 
+You should eventually see something like:
+
 ```
 Installing Platform9 CLI...
 
@@ -142,20 +144,16 @@ use the local-path provisioner:
 make local-storage
 ```
 
-Change the following in the Makefile
-Keep `local-path` if using the local path provisioner above.
+Change the following in the Makefile if you wish to use a custom StorageClasss.
+Keep `local-path` if using the local path provisioner from above.
 
 ```
 STORAGE_CLASS_NAME :=
 ```
 
-## Create a VM with ephemeral disk
-
-```shell
-make containerdisk-demo-fedora
-```
-
 ## Watch progress
+
+Watch resources being created
 
 ```shell
 make watch
@@ -163,11 +161,15 @@ make watch
 
 ## Console access
 
+Get console access via kubectl virt plugin
+
 ```shell
 VM=fedora-vm make get-console
 ```
 
 ## Cleanup
+
+Destroy all the resources created
 
 ```
 make destroy
@@ -176,8 +178,7 @@ make destroy
 ## Create a VM from a Cloned Golden Image DataVolume
 
 ```
-make centos-golden-dv
-make centos-cloned
+make centos-golden-dv centos-cloned
 ```
 
 ## Create a VM from HTTP disk image source and a dynamically created DataVolume
