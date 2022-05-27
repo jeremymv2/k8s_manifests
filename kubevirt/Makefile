@@ -1,7 +1,7 @@
-NAMESPACE  := virtualmachines
-PUB_SSH_KEY := ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
-STORAGE_CLASS_NAME := local-path
-SECONDARY_NIC := ens7
+NAMESPACE  ?= virtualmachines
+PUB_SSH_KEY ?= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
+STORAGE_CLASS_NAME ?= local-path
+SECONDARY_NIC ?= ens7
 VM ?= undef
 
 export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY SECONDARY_NIC
@@ -33,9 +33,13 @@ destroy-namespace:
 		--context $(KUBE_CONTEXT) \
 		-f -
 
+setup: namespace
+
 containerdisk-demo-ubuntu:
 	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	@echo "======= MANIFEST ======="
 	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml
+	@echo "======= KUBECTL ======="
 	envsubst < vmi-ubuntu-containerdisk-emptydisk.yaml | kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
@@ -49,6 +53,29 @@ destroy-containerdisk-demo-ubuntu:
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
 		-f - || true
+
+quickstart-demo: setup containerdisk-demo-ubuntu
+
+containerdisk-demo-ubuntu-join-cluster:
+	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	envsubst < vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml
+	envsubst < vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml | kubectl apply \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f -
+
+destroy-containerdisk-demo-ubuntu-join-cluster:
+	@echo "Deleting containerdisk demo from namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
+	envsubst < vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f - || true
+
+quickstart-demo-join-cluster: setup containerdisk-demo-ubuntu-join-cluster
+
+destroy-quickstart-demo: destroy-containerdisk-demo-ubuntu destroy-containerdisk-demo-ubuntu-join-cluster
 
 containerdisk-demo-fedora:
 	@echo "Deploying containerdisk demo into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"

@@ -5,7 +5,7 @@ metadata:
 spec:
   source:
     pvc:
-      namespace: cdi
+      namespace: ${NAMESPACE}
       name: centos-golden-dv
   pvc:
     storageClassName: ${STORAGE_CLASS_NAME}

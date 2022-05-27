@@ -1,0 +1,50 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+metadata:
+  name: ubuntu-vm-2
+spec:
+  terminationGracePeriodSeconds: 30
+  domain:
+    resources:
+      requests:
+        memory: 4096M
+    devices:
+      disks:
+      - name: containerdisk
+        disk:
+          bus: virtio
+      - name: emptydisk
+        disk:
+          bus: virtio
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+  volumes:
+  - name: containerdisk
+    containerDisk:
+      image: tedezed/ubuntu-container-disk:20.0
+  - name: emptydisk
+    emptyDisk:
+      capacity: "10Gi"
+  - name: cloudinitdisk
+    cloudInitNoCloud:
+      userData: |-
+        #cloud-config
+        password: winterwonderland
+        chpasswd: { expire: False }
+        ssh_pwauth: True
+        manage_etc_hosts: true
+        ssh_authorized_keys:
+          - ${PUB_SSH_KEY}
+        write_files:
+          - content: |
+              #!/bin/bash
+              setenforce 0 || true
+              curl -sL https://pmkft-assets.s3-us-west-1.amazonaws.com/pf9ctl_setup -o- | bash >/tmp/cloudinit.log 2>&1
+              pf9ctl config set -u "${DDU_URL}" -e "${ADMIN_USER_LOGIN}" -p "${ADMIN_USER_PASSWORD}" -t "${SERVICE}" -r "${REGION}" --no-prompt >>/tmp/cloudinit.log 2>&1
+              nice -5 pf9ctl prep-node --skip-checks --no-prompt >>/tmp/cloudinit.log 2>&1
+              nice -5 pf9ctl attach-node --no-prompt --uuid ${CLUSTER_UUID} --worker-ip $(hostname --all-ip-addresses | cut -d " " -f1) >>/tmp/cloudinit.log 2>&1
+            path: /root/register_node.sh
+            permissions: "0755"
+        runcmd:
+          - /root/register_node.sh

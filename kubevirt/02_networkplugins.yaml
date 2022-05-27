@@ -1,0 +1,15 @@
+apiVersion: plumber.k8s.pf9.io/v1
+kind: NetworkPlugins
+metadata:
+  name: networkplugins
+  namespace: luigi-system
+spec:
+  plugins:
+    hostPlumber:
+      namespace: luigi-system
+    #nodeFeatureDiscovery: {}
+    #multus: {}
+    #whereabouts: {}
+    ovs:
+      namespace: luigi-system
+    #sriov: {}
