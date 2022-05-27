@@ -62,7 +62,7 @@ Alternatively, console into the vm from one of the cluster nodes
 /opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm -n virtualmachines
 ```
 
-Variation of quickstart with VM node registering to control plane and joining an existing cluster.
+### Variation of quickstart with VM node registering to control plane and joining an existing cluster.
 
 Edit the `admin.rc` file and fill out the DU portion, then source the file again.
 
