@@ -1,19 +1,21 @@
 NAMESPACE  := kube-system
-CHART_NAME := nfs-subdir-external-provisioner
+CHART_NAME := csi-driver-nfs
 CHART_REPO := $(CHART_NAME)
-CHART_VERSION := v4.0.16
-APP_VERSION_TAG := v4.0.2
+CHART_VERSION := v4.0.0
 RELEASE_NAME := $(CHART_NAME)
-REPO_URL   := https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+REPO_URL   := https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+STORAGE_CLASS_NAME := nfs-csi
+CONTROLLER_RUN_ON_MASTERS := true
+CONTROLLER_REPLICAS := 2
+DRIVER_MOUNT_PERMISSIONS := 0777
 NFS_SERVER := 10.128.144.128
 NFS_PATH   :=  /srv/nfs/kubedata
-STORAGE_CLASS_NAME := nfs-client
-ARCHIVE_ON_DELETE_BOOL := false
-ACCESS_MODE := ReadWriteMany
-NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev,nofail
 VOLUME_BINDING_MODE := Immediate
+NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail
 
-export NAMESPACE STORAGE_CLASS_NAME NFS_MOUNT_OPTIONS
+export NAMESPACE STORAGE_CLASS_NAME VOLUME_BINDING_MODE NFS_MOUNT_PERMISSIONS \
+	CONTROLLER_REPLICAS CONTROLLER_RUN_ON_MASTERS NFS_SERVER NFS_PATH VOLUME_BINDING_MODE \
+	NFS_MOUNT_OPTIONS DRIVER_MOUNT_PERMISSIONS
 
 include ../../Makefile
 
@@ -29,28 +31,50 @@ destroy:
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
 		-f $(RELEASE_NAME).yaml
+	kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		secret mount-options
 
-apply: setup
+labels:
+	for master in $$(kubectl get nodes --selector=node-role.kubernetes.io/master \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		-o jsonpath='{$$.items[*].metadata.name}') ; \
+		do echo $$master ; \
+		kubectl label --kubeconfig $(KUBECONFIG) --context $(KUBE_CONTEXT) \
+		nodes $$master kubernetes.io/role=master || true ; \
+	done
+
+#apply: setup labels
+apply: labels
 	@echo "Templating chart $(RELEASE_NAME) yaml with version $(CHART_VERSION) from $(CHART_REPO)/$(CHART_NAME) \
 		into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	helm template $(RELEASE_NAME) $(CHART_REPO)/$(CHART_NAME) \
 		--namespace $(NAMESPACE) \
 		--version $(CHART_VERSION) \
-		--set image.tag=$(APP_VERSION_TAG) \
-		--set nfs.server=$(NFS_SERVER) \
-    		--set nfs.path=$(NFS_PATH) \
-		--set nfs.mountOptions="{$(NFS_MOUNT_OPTIONS)}" \
-    		--set storageClass.name=$(STORAGE_CLASS_NAME) \
-    		--set storageClass.archiveOnDelete=$(ARCHIVE_ON_DELETE_BOOL) \
-    		--set storageClass.accessModes=$(ACCESS_MODE) \
+		--set driver.mountPermissions=$(DRIVER_MOUNT_PERMISSIONS) \
+		--set controller.runOnMaster=$(CONTROLLER_RUN_ON_MASTERS) \
+		--set controller.replicas=$(CONTROLLER_REPLICAS) \
 		> $(RELEASE_NAME).yaml
-	sed -i.bak -e "s/\(reclaimPolicy: .*\)/\1\nvolumeBindingMode: $(VOLUME_BINDING_MODE)/" $(RELEASE_NAME).yaml
-	rm $(RELEASE_NAME).yaml.bak
+	@echo "---" >> $(RELEASE_NAME).yaml
+	envsubst < storageclass.yaml.tmpl >> $(RELEASE_NAME).yaml
+	echo $(NFS_MOUNT_OPTIONS) | tr ',' '\n' | sed -e 's/^/  - /g' >> $(RELEASE_NAME).yaml
 	kubectl apply \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
 		-f $(RELEASE_NAME).yaml
+	kubectl delete secret generic mount-options \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) || true
+	kubectl create secret generic mount-options \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		--from-literal mountOptions="$(NFS_MOUNT_OPTIONS)"
 
 test:
 	envsubst < test-pvc.yaml | kubectl apply \

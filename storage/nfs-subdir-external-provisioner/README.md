@@ -1,6 +1,6 @@
-# Installs NFS CSI
+# Installs NFS external provisioner
 
-This installs the [csi-driver-nfs](https://github.com/kubernetes-csi/csi-driver-nfs) via a templated helm [chart](https://github.com/kubernetes-csi/csi-driver-nfs/tree/master/charts)
+This installs the [nfs-subdir-external-provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner) via a templated helm [chart](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/tree/master/charts/nfs-subdir-external-provisioner)
 
 # Overview
 
@@ -22,13 +22,15 @@ Export an NFS share as such:
 Edit the `Makefile` in this directory and change these lines as needed:
 
 ```
-CHART_VERSION := v4.0.0
-CONTROLLER_REPLICAS := 2
-DRIVER_MOUNT_PERMISSIONS := 0777
-NFS_SERVER := 10.128.144.128
-NFS_PATH   :=  /srv/nfs/kubedata
-VOLUME_BINDING_MODE := Immediate
-NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail
+CHART_VERSION := v4.0.16
+APP_VERSION_TAG := v4.0.2
+NFS_SERVER :=
+NFS_PATH :=
+STORAGE_CLASS_NAME :=
+ARCHIVE_ON_DELETE_BOOL :=
+ACCESS_MODE :=
+NFS_MOUNT_OPTIONS :=
+VOLUME_BINDING_MODE :=
 ```
 
 Export the KUBECONFIG environment variable, pointing to the PMK cluster's kubeconfig.yaml

@@ -24,7 +24,7 @@ metadata:
 provisioner: cluster.local/nfs-subdir-external-provisioner
 allowVolumeExpansion: true
 reclaimPolicy: Delete
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 parameters:
   archiveOnDelete: "false"
 mountOptions:
