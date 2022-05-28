@@ -13,6 +13,8 @@ Export your KUBECONFIG environment variable
 export KUBECONFIG=~/Downloads/cluster-name.yaml
 ```
 
+Ensure necessary PODs are running
+
 ```shell
 kubectl get pods -n cdi
 kubectl get pods -n luigi-system
@@ -64,7 +66,7 @@ Alternatively, console into the vm from one of the cluster nodes
 
 ### Variation of quickstart
 
-In this variation, we have the VM node registering to control plane and joining an existing cluster.
+In this variation, we have the VM node registering to a DU control plane and then joining an existing cluster in the DU.
 
 Edit the `admin.rc` file and fill out the DU portion, then source the file again.
 
