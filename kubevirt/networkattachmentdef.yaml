@@ -1,21 +1,22 @@
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: ovs-ipam-vm-trunk-net
+  name: ovs-ipam-vlan-${WHEREABOUTS_VLAN_ID}
+  namespace: ${NAMESPACE}
   annotations:
-    k8s.v1.cni.cncf.io/resourceName: ovs-cni.network.kubevirt.io/ovs-br01
+    k8s.v1.cni.cncf.io/resourceName: ovs-cni.network.kubevirt.io/${OVS_BRIDGE}
 spec:
   config: '{
       "cniVersion": "0.3.1",
       "type": "ovs",
-      "bridge": "ovs-br01",
-      "vlan": 104,
+      "bridge": "${OVS_BRIDGE}",
+      "vlan": ${WHEREABOUTS_VLAN_ID},
       "ipam": {
         "type": "whereabouts",
         "datastore": "kubernetes",
         "kubernetes": { "kubeconfig": "/etc/cni/net.d/whereabouts.d/whereabouts.kubeconfig" },
-        "range": "192.168.15.0/24",
-        "range_start": "192.168.15.240",
-        "range_end": "192.168.15.245"
+        "range": "${WHEREABOUTS_NET_RANGE}",
+        "range_start": "${WHEREABOUTS_NET_START}",
+        "range_end": "${WHEREABOUTS_NET_END}"
       }
     }'

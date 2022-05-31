@@ -1,0 +1,18 @@
+apiVersion: plumber.k8s.pf9.io/v1
+kind: NetworkPlugins
+metadata:
+  name: networkplugins
+  namespace: ${NAMESPACE}
+spec:
+  plugins:
+    hostPlumber:
+      namespace: ${NAMESPACE}
+    nodeFeatureDiscovery:
+      namespace: ${NAMESPACE}
+    multus:
+      namespace: ${NAMESPACE}
+    whereabouts:
+      namespace: ${NAMESPACE}
+    ovs:
+      namespace: ${NAMESPACE}
+    #sriov: {}

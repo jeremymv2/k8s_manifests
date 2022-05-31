@@ -2,8 +2,8 @@ apiVersion: plumber.k8s.pf9.io/v1
 kind: HostNetworkTemplate
 metadata:
   name: hostconfig-net
-  namespace: luigi-system
+  namespace: ${NAMESPACE}
 spec:
   ovsConfig:
-  - bridgeName: ovs-br01
+  - bridgeName: ${OVS_BRIDGE}
     nodeInterface: ${SECONDARY_NIC}

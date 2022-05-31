@@ -1,7 +1,7 @@
 apiVersion: kubevirt.io/v1
 kind: VirtualMachineInstance
 metadata:
-  name: vmi-cd1-vlan20-routes
+  name: vmi-cd1-vlan2504-routes
 spec:
   domain:
     devices:
@@ -13,8 +13,8 @@ spec:
           bus: virtio
         name: cloudinitdisk
       interfaces:
-      - name: default
-        bridge: {}
+      #- name: default
+      #  bridge: {}
       - name: ovs-ipam-net1
         bridge: {}
       rng: {}
@@ -24,11 +24,11 @@ spec:
       requests:
         memory: 1024M
   networks:
-  - name: default
-    pod: {}
+  #- name: default
+  #pod: {}
   - name: ovs-ipam-net1
     multus:
-      networkName: ovs-ipam-vlan-20
+      networkName: ovs-ipam-vlan-2504
   terminationGracePeriodSeconds: 0
   volumes:
   - containerDisk:
@@ -41,8 +41,4 @@ spec:
               echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
               echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf
               sysctl -p
-              ip route del default via 169.254.1.1 dev eth0
-              ip route add default via 172.28.20.1 dev eth1
-              ip route add 10.20.0.0/16 via 169.254.1.1 dev eth0
-              ip route add 10.21.0.0/16 via 169.254.1.1 dev eth0
     name: cloudinitdisk

@@ -1,11 +1,10 @@
-# Kubevirt
+# Kubevirt Playground
 
 ## Pre-requisites
 
 It is required to have checked the "Enable Kubevirt" Add-ons when creating the cluster.
-If enabled after creation, make sure `kubevirt` and `luigi` addons are enabled and healthy.
-Ensure that all PODS are running in the `luigi-system` and `cdi` namespaces. These can take
-up to 10 minutes to go into Running state after a fresh cluster install.
+
+If you wish to enable after the fact, make sure `kubevirt` and `luigi` addons are enabled and healthy in the cluster Addons UI.
 
 Export your KUBECONFIG environment variable
 
@@ -13,7 +12,8 @@ Export your KUBECONFIG environment variable
 export KUBECONFIG=~/Downloads/cluster-name.yaml
 ```
 
-Ensure necessary PODs are running
+Ensure that all PODS are running in the `luigi-system` and `cdi` namespaces. These can take
+up to 10 minutes to go into Running state after a fresh cluster install as there are multiple stages.
 
 ```shell
 kubectl get pods -n cdi
@@ -22,7 +22,7 @@ kubectl get pods -n luigi-system
 
 ## Minimal Quickstart
 
-This quickstart will launch a Ubuntu VirtualMachineInstance using an ephemeral disk image.
+This quickstart will launch a Ubuntu `VirtualMachineInstance` using an ephemeral disk image.
 
 On one of the cluster nodes, create a ssh key. This key will be used to ssh into the VirtualMachineInstance.
 
@@ -191,7 +191,17 @@ make centos-source-http
 
 ## Configure Secondary Network for Direct VM Access
 
-Ensure that you have `SECONDARY_NIC` set correctly in the Makefile
+Ensure that you have the following variables set in the Makefile
+
+```
+SECONDARY_NIC :=
+WHEREABOUTS_VLAN_ID :=
+WHEREABOUTS_NET_RANGE :=
+WHEREABOUTS_NET_START :=
+WHEREABOUTS_NET_END :=
+```
+
+Then run the following
 
 ```shell
 make hostnetwork
