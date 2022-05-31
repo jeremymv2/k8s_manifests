@@ -206,3 +206,15 @@ Then run the following
 ```shell
 make hostnetwork
 ```
+
+Then launch a VMI with OVS networking
+
+```
+make containerdisk-demo-ubuntu-ovs
+```
+
+To destroy the VMI
+
+```
+make destroy-containerdisk-demo-ubuntu-ovs
+```
