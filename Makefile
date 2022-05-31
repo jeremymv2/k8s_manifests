@@ -1,4 +1,4 @@
-KUBE_CONTEXT := default
+KUBE_CONTEXT ?= default
 KUBECONFIG ?= default
 
 export KUBECONFIG KUBE_CONTEXT
