@@ -20,16 +20,16 @@ spec:
           bus: virtio
         name: cloudinitdisk
       interfaces:
-      #- name: default
-      #  bridge: {}
+      - name: default
+        bridge: {}
       - name: ovs-ipam-net1
         bridge: {}
   networks:
-  #- name: default
-  #pod: {}
+  - name: default
+    pod: {}
   - name: ovs-ipam-net1
     multus:
-      networkName: ovs-ipam-vlan-2504
+      networkName: ovs-ipam-net
   terminationGracePeriodSeconds: 0
   volumes:
   - name: containerdisk

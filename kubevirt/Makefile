@@ -7,10 +7,11 @@ WHEREABOUTS_VLAN_ID := 2504
 WHEREABOUTS_NET_RANGE := 10.128.144.0/23
 WHEREABOUTS_NET_START := 10.128.144.250
 WHEREABOUTS_NET_END := 10.128.144.254
+WHEREABOUTS_GATEWAY := 10.128.144.1
 VM ?= undef
 
 export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY SECONDARY_NIC OVS_BRIDGE WHEREABOUTS_VLAN_ID \
-	WHEREABOUTS_NET_RANGE WHEREABOUTS_NET_START WHEREABOUTS_NET_END
+	WHEREABOUTS_NET_RANGE WHEREABOUTS_NET_START WHEREABOUTS_NET_END WHEREABOUTS_GATEWAY
 
 include ../Makefile
 
@@ -223,6 +224,21 @@ centos-source-http:
 		--namespace $(NAMESPACE) \
 		-f -
 
+sample-pod-ovs:
+	envsubst < samplepod-ovs.yaml
+	envsubst < samplepod-ovs.yaml | kubectl apply \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f -
+
+destroy-sample-pod-ovs:
+	envsubst < samplepod-ovs.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f -
+
 destroy-centos-source-http:
 	envsubst < vm-centos-http.yaml | kubectl delete \
 		--kubeconfig $(KUBECONFIG) \
@@ -264,12 +280,17 @@ hostnetwork:
 		-f -
 
 destroy-hostnetwork:
-	kubectl delete \
+	envsubst < networkattachmentdef.yaml | kubectl delete \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
-		-f networkplugins.yaml
+		-f -
 	envsubst < hostnetwork.yaml | kubectl delete \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		--namespace $(NAMESPACE) \
+		-f -
+	envsubst < networkplugins.yaml | kubectl delete \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \

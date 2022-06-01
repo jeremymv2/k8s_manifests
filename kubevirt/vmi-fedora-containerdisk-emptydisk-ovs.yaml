@@ -1,7 +1,7 @@
 apiVersion: kubevirt.io/v1
 kind: VirtualMachineInstance
 metadata:
-  name: vmi-cd1-vlan2504-routes
+  name: vmi-fedora-ovs
 spec:
   domain:
     devices:
@@ -28,7 +28,7 @@ spec:
   #pod: {}
   - name: ovs-ipam-net1
     multus:
-      networkName: ovs-ipam-vlan-2504
+      networkName: ovs-ipam-net
   terminationGracePeriodSeconds: 0
   volumes:
   - containerDisk:

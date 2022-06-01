@@ -1,7 +1,7 @@
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: ovs-ipam-net
+  name: ovs-ipam-vlan-${WHEREABOUTS_VLAN_ID}
   namespace: ${NAMESPACE}
   annotations:
     k8s.v1.cni.cncf.io/resourceName: ovs-cni.network.kubevirt.io/${OVS_BRIDGE}
@@ -10,6 +10,7 @@ spec:
       "cniVersion": "0.4.0",
       "type": "ovs",
       "bridge": "${OVS_BRIDGE}",
+      "vlan": ${WHEREABOUTS_VLAN_ID},
       "spoofchk": "off",
       "ipam": {
         "type": "whereabouts",
