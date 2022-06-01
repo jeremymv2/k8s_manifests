@@ -4,7 +4,7 @@
 
 The Kubevirt and Luigi addons must be enabled.
 
-In addition, ensure that all PODS are running in the `luigi-system` and `cdi` namespaces. These can take
+In addition, ensure that all pods are running in the `luigi-system` and `cdi` namespaces. These can take
 up to 10 minutes to go into Running state after a fresh cluster install as there are multiple stages.
 
 ```shell
@@ -14,7 +14,8 @@ kubectl get pods -n luigi-system
 
 You can then either run `kubectl` and `virtctl` commands from a workstation or from one of the cluster nodes.
 
-Export KUBECONFIG environment variable
+You must export KUBECONFIG environment variable.
+
 If from a cluster node:
 
 ```shell
@@ -36,7 +37,7 @@ ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/id_ed25519
 
 ## Configuration
 
-Edit the `Makefile` and set some variables. The ones labeled optional below can be left as-is
+Edit the `Makefile` and set some variables. The ones labeled optional can be left as-is
 until or if needed later for more advanced configurations.
 
 ```
@@ -56,7 +57,7 @@ WHEREABOUTS_GATEWAY := 10.128.144.1
 ### Storage
 
 If you do not have a `StorageClass` configured, run the following to install a `local-path` CSI.
-Otherwise, set the `STRORAGE_CLASS_NAME` accordingly above in the Makefile.
+Otherwise, set the `STRORAGE_CLASS_NAME` accordingly above in the Makefile to match your existing `StorageClass`.
 
 ```shell
 kubectl apply -f local-storage-provisioner.yaml
@@ -64,7 +65,7 @@ kubectl apply -f local-storage-provisioner.yaml
 
 ## Render the templates
 
-After updating the `Makefile` or the `admin.rc` file, you can render the templates via:
+After updating the `Makefile` or the `admin.rc` file, you can render the templates at any time via:
 
 ```shell
 make render
@@ -102,7 +103,7 @@ Alternatively, console into the vm from one of the cluster nodes
 /opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm
 ```
 
-Or via the `virt` plugin
+Or via the `virt` plugin if you have installed it on your workstation
 
 ```shell
 kubectl virt console VM
@@ -111,7 +112,7 @@ kubectl virt console VM
 Explore the other objects in the `rendered/` directory and try applying them.
 
 
-## Join a VM to a PMK cluster
+## VirtualMachineInstance auto join a PMK cluster
 
 Create a copy of the `admin.rc` template
 
@@ -134,7 +135,7 @@ Watch the cloud init logs
 ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
 ```
 
-## Install krew and virt kubectl plugin
+## Workstation virt kubectl plugin
 
 ```shell
 make install-krew

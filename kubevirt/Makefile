@@ -1,4 +1,5 @@
 NAMESPACE  ?= vms
+# below are optional until needed..
 PUB_SSH_KEY ?= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDu4qXbvrPPzHEurHD0XL47GHHIln96ct+fcvSZbHMgR root@jmiller01
 STORAGE_CLASS_NAME ?= local-path
 SECONDARY_NIC ?= ens7
