@@ -2,6 +2,7 @@ apiVersion: kubevirt.io/v1
 kind: VirtualMachineInstance
 metadata:
   name: vmi-fedora-ovs
+  namespace: ${NAMESPACE}
 spec:
   domain:
     devices:

@@ -1,11 +1,12 @@
 apiVersion: cdi.kubevirt.io/v1beta1
 kind: DataVolume
 metadata:
-  name: "centos-golden-dv"
+  name: "ubuntu-golden-dv"
+  namespace: ${NAMESPACE}
 spec:
   source:
     http:
-      url: "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2"
+      url: "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
   pvc:
     accessModes:
       - ReadWriteOnce

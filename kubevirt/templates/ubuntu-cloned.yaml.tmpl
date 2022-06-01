@@ -2,6 +2,7 @@ apiVersion: cdi.kubevirt.io/v1beta1
 kind: DataVolume
 metadata:
   name: ubuntu-clone-dv
+  namespace: ${NAMESPACE}
 spec:
   source:
     pvc:
@@ -21,6 +22,7 @@ metadata:
   labels:
     kubevirt.io/vm: ubuntu-cloned
   name: ubuntu-cloned
+  namespace: ${NAMESPACE}
 spec:
   #runStrategy: Manual
   running: true
