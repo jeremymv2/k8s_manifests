@@ -14,9 +14,8 @@ kubectl get pods -n luigi-system
 
 You can then either run `kubectl` and `virtctl` commands from a workstation or from one of the cluster nodes.
 
-If from a cluster node:
-
 Export KUBECONFIG environment variable
+If from a cluster node:
 
 ```shell
 export KUBECONFIG=/etc/pf9/kube.d/kubeconfigs/admin.yaml
@@ -60,18 +59,23 @@ If you do not have a `StorageClass` configured, run the following to install a `
 Otherwise, set the `STRORAGE_CLASS_NAME` accordingly above in the Makefile.
 
 ```shell
-make local-storage
+kubectl apply -f local-storage-provisioner.yaml
 ```
 
-Copy the `admin.rc.tmpl` file to `admin.rc`
+## Render the templates
 
+After updating the `Makefile` or the `admin.rc` file, you can render the templates via:
+
+```shell
+make render
+```
 
 ## Quick Example
 
 Create the namespace
 
 ```shell
-make setup
+kubectl apply -f rendered/namespace.yaml
 ```
 
 Launch a `VirtualMachineInstance`
@@ -86,7 +90,7 @@ See the resources being created
 kubectl get pv,pvc,datavolume,virtualmachine,virtualmachineinstance,pods
 ```
 
-Ssh into the VM from one of the cluster nodes
+Ssh into the VM from the cluster node where you generated the ssh key
 
 ```shell
 ssh -i ~/.ssh/id_ed25519 ubuntu@VM_IP
@@ -95,7 +99,7 @@ ssh -i ~/.ssh/id_ed25519 ubuntu@VM_IP
 Alternatively, console into the vm from one of the cluster nodes
 
 ```shell
-/opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm 
+/opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm
 ```
 
 Or via the `virt` plugin
@@ -104,7 +108,7 @@ Or via the `virt` plugin
 kubectl virt console VM
 ```
 
-Explore the other objects in the `rendered` directory and try applying them.
+Explore the other objects in the `rendered/` directory and try applying them.
 
 
 ## Join a VM to a PMK cluster
@@ -115,8 +119,8 @@ Create a copy of the `admin.rc` template
 cp admin.rc.tmpl admin.rc
 ```
 
-Now edit the `admin.rc` file and configure the DU variables. Then source the file into your environment,
-re-rednder the templates and and launch the VM.
+Edit the `admin.rc` file and configure the DU variables. Then source the file into your environment,
+re-render the templates and then launch the VM.
 
 ```shell
 source admin.rc
