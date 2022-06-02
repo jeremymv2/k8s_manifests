@@ -97,20 +97,21 @@ Ssh into the VM from the cluster node where you generated the ssh key
 ssh -i ~/.ssh/id_ed25519 ubuntu@VM_IP
 ```
 
-Alternatively, console into the vm from one of the cluster nodes
+Alternatively, console into the vm from one of the cluster nodes with the username / passwd from the `cloud-config`.
+Be patient, `cloud-init` can take a few minutes before reaching the final stage. You will see that it has completed
+via a console message.
 
 ```shell
 /opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm
 ```
 
-Or via the `virt` plugin if you have installed it on your workstation
+Or via the `virt` plugin if you have installed it on your workstation using cloud-config user/pass.
 
 ```shell
 kubectl virt console VM
 ```
 
-Explore the other objects in the `rendered/` directory and try applying them.
-
+Note: Explore the other yaml files in the `rendered/` directory and try applying them.
 
 ## VirtualMachineInstance auto join a PMK cluster
 
@@ -129,7 +130,7 @@ make render
 kubectl apply -f rendered/vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml
 ```
 
-Watch the cloud init logs
+Watch the cloud init logs (be patient. cloud-init output takes several minutes to show up)
 
 ```shell
 ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
