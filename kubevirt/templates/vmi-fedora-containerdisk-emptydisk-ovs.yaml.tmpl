@@ -14,8 +14,8 @@ spec:
           bus: virtio
         name: cloudinitdisk
       interfaces:
-      #- name: default
-      #  bridge: {}
+      - name: default
+        bridge: {}
       - name: ovs-ipam-net1
         bridge: {}
       rng: {}
@@ -25,8 +25,8 @@ spec:
       requests:
         memory: 1024M
   networks:
-  #- name: default
-  #pod: {}
+  - name: default
+    pod: {}
   - name: ovs-ipam-net1
     multus:
       networkName: ovs-ipam-net

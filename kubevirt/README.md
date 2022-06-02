@@ -207,3 +207,21 @@ You can then create a VMI utilizing ovs for the interface
 ```shell
 kubectl apply -f rendered/vmi-ubuntu-containerdisk-emptydisk-ovs.yaml
 ```
+
+## Live Migration
+
+Note: Live migration can only occur when the pod network interface of the VMI is `masquerade` as opposed to `bridge`
+
+Also, you must utilize a storage class that supports `ReadWriteMany` access mode for the datavolume.
+
+Create a VM that uses `ReadWriteMany` PVC, a default pod interface in `masquerade` mode, and a secondary interface in multus ovs bridge mode.
+
+```shell
+apply -f rendered/vm-centos-http-readwritemany-ovs.yaml
+```
+
+After it spins up, live migrate it
+
+```shell
+kubectl virt migrate centos-rwx-ovs
+```

@@ -1,0 +1,70 @@
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  labels:
+    kubevirt.io/vm: centos-rwx-ovs
+  name: centos-rwx-ovs
+  namespace: ${NAMESPACE}
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      name: centos-rwx-ovs-1-dv
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 10G
+        storageClassName: ${STORAGE_CLASS_NAME}
+      source:
+        http:
+          url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: centos-rwx-ovs
+    spec:
+      domain:
+        cpu:
+          cores: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: datavolumevolume
+          - disk:
+              bus: virtio
+            name: cloudinit
+          interfaces:
+          - name: default
+            masquerade: {}
+          - name: ovs-ipam-net1
+            bridge: {}
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 2G
+      terminationGracePeriodSeconds: 0
+      networks:
+      - name: default
+        pod: {}
+      - name: ovs-ipam-net1
+        multus:
+          networkName: ovs-ipam-net
+      volumes:
+      - dataVolume:
+          name: centos-rwx-ovs-1-dv
+        name: datavolumevolume
+      - cloudInitNoCloud:
+          userData: |-
+            #cloud-config
+            password: centos
+            ssh_pwauth: True
+            manage_etc_hosts: true
+            chpasswd: { expire: False }
+            ssh_authorized_keys:
+              - ${PUB_SSH_KEY}
+        name: cloudinit
