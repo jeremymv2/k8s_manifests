@@ -1,0 +1,45 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+metadata:
+  name: ubuntu-vm
+  namespace: ${NAMESPACE}
+spec:
+  terminationGracePeriodSeconds: 30
+  domain:
+    resources:
+      requests:
+        memory: 1024M
+    devices:
+      disks:
+      - name: containerdisk
+        disk:
+          bus: virtio
+      - name: emptydisk
+        disk:
+          bus: virtio
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+      interfaces:
+      - masquerade: {}
+        name: default
+  networks:
+  - name: default
+    pod: {}
+  volumes:
+  - name: containerdisk
+    containerDisk:
+      image: tedezed/ubuntu-container-disk:20.0
+  - name: emptydisk
+    emptyDisk:
+      capacity: "8Gi"
+  - name: cloudinitdisk
+    cloudInitNoCloud:
+      userData: |-
+        #cloud-config
+        password: ubuntu123
+        ssh_pwauth: True
+        manage_etc_hosts: true
+        chpasswd: { expire: False }
+        ssh_authorized_keys:
+          - ${PUB_SSH_KEY}
