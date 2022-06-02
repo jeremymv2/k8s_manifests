@@ -94,7 +94,7 @@ kubectl get pv,pvc,datavolume,virtualmachine,virtualmachineinstance,pods
 Ssh into the VM from the cluster node where you generated the ssh key
 
 ```shell
-ssh -i ~/.ssh/id_ed25519 ubuntu@VM_IP
+ssh -i ~/.ssh/id_ed25519 fedora@VM_IP
 ```
 
 Alternatively, console into the vm from one of the cluster nodes with the username / passwd from the `cloud-config`.
@@ -102,13 +102,13 @@ Be patient, `cloud-init` can take a few minutes before reaching the final stage.
 via a console message.
 
 ```shell
-/opt/pf9/pf9-kube/bin/virtctl console ubuntu-vm
+/opt/pf9/pf9-kube/bin/virtctl console fedora-vm
 ```
 
 Or via the `virt` plugin if you have installed it on your workstation using cloud-config user/pass.
 
 ```shell
-kubectl virt console VM
+kubectl virt console fedora-vm
 ```
 
 Note: Explore the other yaml files in the `rendered/` directory and try applying them.
@@ -141,4 +141,63 @@ ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
 ```shell
 make install-krew
 make install-krew-virt
+```
+
+## Advanced Networking
+
+With multus we can enable a secondary CNI with either `ovs` bridge or `sriov`. This allows us
+to add a second NIC to the VM with direct access to the Host's network interface. Additionally, with
+whereabouts, we can implement IPAM for the VM interfaces.
+
+First, ensure the Host has an available NIC that is UP but without an IP assigned.
+
+Set the following values in the Makefile:
+
+```
+SECONDARY_NIC ?= ens7
+OVS_BRIDGE := ovs-br01
+WHEREABOUTS_VLAN_ID := 2504
+WHEREABOUTS_NET_RANGE := 10.128.144.0/23
+WHEREABOUTS_NET_START := 10.128.144.250
+WHEREABOUTS_NET_END := 10.128.144.254
+WHEREABOUTS_GATEWAY := 10.128.144.1
+```
+
+Ensure the templates are re-rendered with `make render`.
+
+Apply the `NetworkPlugins`
+
+```shell
+kubectl apply -f rendered/networkplugins.yaml
+```
+
+Wait a few moments, waiting for all the pods to come up Running in the namespace. Then apply
+the `HostNetworkTemplate`.
+
+```shell
+kubectl apply -f rendered/hostnetwork.yaml
+```
+
+This should provision an ovs bridge on each of the cluster nodes. You can exec into one of the ovs daemon
+pods to verify:
+
+```shell
+$ kubectl exec -it ovs-daemons-blttz -n virtualmachines -- ovs-vsctl show
+Defaulted container "ovs-services" out of: ovs-services, ovs-db-init (init)
+2182276a-62b2-4a3c-84cc-932d4a7e73d0
+    Bridge "ovs-br01"
+        Port "ovs-br01"
+            Interface "ovs-br01"
+                type: internal
+        Port "ens7"
+            Interface "ens7"
+        Port "vethfca11110"
+            Interface "vethfca11110"
+    ovs_version: "2.13.5"
+```
+
+Finally, apply the `NetworkAttachmentDefinition`
+
+```shell
+kubectl apply -f rendered/networkattachmentdef.yaml
 ```
