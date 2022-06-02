@@ -201,3 +201,9 @@ Finally, apply the `NetworkAttachmentDefinition`
 ```shell
 kubectl apply -f rendered/networkattachmentdef.yaml
 ```
+
+You can then create a VMI utilizing ovs for the interface
+
+```shell
+kubectl apply -f rendered/vmi-ubuntu-containerdisk-emptydisk-ovs.yaml
+```
