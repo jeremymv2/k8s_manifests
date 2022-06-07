@@ -17,6 +17,7 @@ spec:
         "log_level" : "debug",
         "datastore": "kubernetes",
         "kubernetes": { "kubeconfig": "/etc/cni/net.d/whereabouts.d/whereabouts.kubeconfig" },
+        "routes":[ { "dst":"${WHEREABOUTS_NET_RANGE}", "gw":"${WHEREABOUTS_GATEWAY}" } ],
         "range": "${WHEREABOUTS_NET_RANGE}",
         "range_start": "${WHEREABOUTS_NET_START}",
         "range_end": "${WHEREABOUTS_NET_END}",
