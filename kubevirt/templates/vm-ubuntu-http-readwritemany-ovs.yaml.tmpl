@@ -2,13 +2,13 @@ apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   labels:
-    kubevirt.io/vm: centos-rwx-ovs
-  name: centos-rwx-ovs
+    kubevirt.io/vm: ubuntu-rwx-ovs
+  name: ubuntu-rwx-ovs
   namespace: ${NAMESPACE}
 spec:
   dataVolumeTemplates:
   - metadata:
-      name: centos-rwx-ovs-1-dv
+      name: ubuntu-rwx-ovs-1-dv
     spec:
       pvc:
         accessModes:
@@ -19,12 +19,12 @@ spec:
         storageClassName: ${STORAGE_CLASS_NAME}
       source:
         http:
-          url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2
+          url: http://ubuntu.mirrors.tds.net/ubuntu-cloud-images/releases/20.04/release/ubuntu-20.04-server-cloudimg-amd64.img
   running: true
   template:
     metadata:
       labels:
-        kubevirt.io/vm: centos-rwx-ovs
+        kubevirt.io/vm: ubuntu-rwx-ovs
     spec:
       domain:
         cpu:
@@ -53,29 +53,40 @@ spec:
             memory: 2G
       terminationGracePeriodSeconds: 0
       networks:
-      - name: default
-        pod: {}
       - name: ovs-ipam-net1
         multus:
           networkName: ovs-ipam-net
+      - name: default
+        pod: {}
       volumes:
       - dataVolume:
-          name: centos-rwx-ovs-1-dv
+          name: ubuntu-rwx-ovs-1-dv
         name: datavolumevolume
       - cloudInitNoCloud:
           networkData: |-
             version: 2
             ethernets:
-              eth0:
+              enp1s0:
                 dhcp4: true
-              eth1:
+                routes:
+                  - to: 0.0.0.0/0
+                    via: ${WHEREABOUTS_GATEWAY}
+                    table: 200
+                  - to: ${WHEREABOUTS_NET_RANGE}
+                    via: ${WHEREABOUTS_GATEWAY}
+                    table: 200
+                routing-policy:
+                  - from: ${WHEREABOUTS_NET_RANGE}
+                    table: 200
+                    priority: 100
+              enp2s0:
                 dhcp4: true
           userData: |-
-              #!/bin/bash
-              echo "centos" | passwd centos --stdin
-              echo "${PUB_SSH_KEY}" > ~centos/.ssh/authorized_keys
-              echo "default via ${WHEREABOUTS_GATEWAY} dev eth0 table 200" > /etc/sysconfig/network-scripts/route-eth0
-              echo "${WHEREABOUTS_NET_RANGE} via ${WHEREABOUTS_GATEWAY} dev eth0 table 200" >> /etc/sysconfig/network-scripts/route-eth0
-              echo "prio 100 from ${WHEREABOUTS_NET_RANGE} lookup 200" > /etc/sysconfig/network-scripts/rule-eth0
-              systemctl restart network
+            #cloud-config
+            password: ubuntu
+            ssh_pwauth: True
+            manage_etc_hosts: true
+            chpasswd: { expire: False }
+            ssh_authorized_keys:
+              - ${PUB_SSH_KEY}
         name: cloudinit

@@ -4,7 +4,6 @@ metadata:
   name: ubuntu-vm-ovs
   namespace: ${NAMESPACE}
 spec:
-  terminationGracePeriodSeconds: 30
   domain:
     resources:
       requests:
@@ -23,6 +22,10 @@ spec:
       interfaces:
       - name: ovs-ipam-net1
         bridge: {}
+        ports:
+          - port: 22
+          - port: 80
+          - port: 443
       - name: default
         masquerade: {}
   networks:
@@ -41,6 +44,24 @@ spec:
       capacity: "8Gi"
   - name: cloudinitdisk
     cloudInitNoCloud:
+      networkData: |-
+        version: 2
+        ethernets:
+          enp1s0:
+            dhcp4: true
+            routes:
+              - to: 0.0.0.0/0
+                via: ${WHEREABOUTS_GATEWAY}
+                table: 200
+              - to: ${WHEREABOUTS_NET_RANGE}
+                via: ${WHEREABOUTS_GATEWAY}
+                table: 200
+            routing-policy:
+              - from: ${WHEREABOUTS_NET_RANGE}
+                table: 200
+                priority: 100
+          enp2s0:
+            dhcp4: true
       userData: |-
         #cloud-config
         password: ubuntu123
