@@ -9,9 +9,11 @@ WHEREABOUTS_NET_RANGE := 10.128.144.0/23
 WHEREABOUTS_NET_START := 10.128.144.250
 WHEREABOUTS_NET_END := 10.128.144.254
 WHEREABOUTS_GATEWAY := 10.128.144.1
+POD_CIDR := 10.20.0.0/16
 
 export NAMESPACE STORAGE_CLASS_NAME PUB_SSH_KEY SECONDARY_NIC OVS_BRIDGE WHEREABOUTS_VLAN_ID \
-	WHEREABOUTS_NET_RANGE WHEREABOUTS_NET_START WHEREABOUTS_NET_END WHEREABOUTS_GATEWAY
+	WHEREABOUTS_NET_RANGE WHEREABOUTS_NET_START WHEREABOUTS_NET_END WHEREABOUTS_GATEWAY \
+	POD_CIDR
 
 include ../Makefile
 
@@ -31,8 +33,10 @@ clean:
 	rm -f rendered/*
 
 render:
-	for source in $$(ls templates/*tmpl); do \
+	@echo "Run any of the following.."
+	@echo "======================"
+	@for source in $$(ls templates/*tmpl); do \
 		dest=rendered/$$(basename $$source .tmpl) ; \
-		echo "Rendering $$source as $$dest "; \
+		echo "kubectl apply -f $$dest"; \
 		envsubst < $$source > $$dest ; \
 	done

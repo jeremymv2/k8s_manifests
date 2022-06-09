@@ -19,7 +19,7 @@ spec:
         storageClassName: ${STORAGE_CLASS_NAME}
       source:
         http:
-          url: http://ubuntu.mirrors.tds.net/ubuntu-cloud-images/releases/20.04/release/ubuntu-20.04-server-cloudimg-amd64.img
+          url: https://kubevirt.s3.us-west-2.amazonaws.com/ubuntu-20.04-server-cloudimg-amd64.qcow2
   running: true
   template:
     metadata:
@@ -50,7 +50,7 @@ spec:
           type: ""
         resources:
           requests:
-            memory: 2G
+            memory: 4G
       terminationGracePeriodSeconds: 0
       networks:
       - name: ovs-ipam-net1
@@ -71,16 +71,29 @@ spec:
                 routes:
                   - to: 0.0.0.0/0
                     via: ${WHEREABOUTS_GATEWAY}
-                    table: 200
-                  - to: ${WHEREABOUTS_NET_RANGE}
-                    via: ${WHEREABOUTS_GATEWAY}
-                    table: 200
-                routing-policy:
-                  - from: ${WHEREABOUTS_NET_RANGE}
-                    table: 200
-                    priority: 100
+                    metric: 3
+                nameservers:
+                  addresses: [8.8.8.8, 8.8.4.4]
+                  search: [${NAMESPACE}.svc.cluster.local, svc.cluster.local, cluster.local, mpt1.pf9.io]
               enp2s0:
                 dhcp4: true
+                dhcp4-overrides:
+                  use-routes: false
+                  use-dns: false
+                routes:
+                  - to: 0.0.0.0/0
+                    via: 10.0.2.1
+                    table: 200
+                  - to: 10.0.2.0/24
+                    via: 10.0.2.1
+                    table: 200
+                  - to: ${POD_CIDR}
+                    via: 10.0.2.1
+                    table: 200
+                routing-policy:
+                  - from: ${POD_CIDR}
+                    table: 200
+                    priority: 100
           userData: |-
             #cloud-config
             password: ubuntu

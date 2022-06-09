@@ -52,19 +52,28 @@ spec:
             routes:
               - to: 0.0.0.0/0
                 via: ${WHEREABOUTS_GATEWAY}
-                table: 200
-              - to: ${WHEREABOUTS_NET_RANGE}
-                via: ${WHEREABOUTS_GATEWAY}
-                table: 200
-            routing-policy:
-              - from: ${WHEREABOUTS_NET_RANGE}
-                table: 200
-                priority: 100
+            nameservers:
+              addresses: [8.8.8.8, 8.8.4.4]
+              search: [${NAMESPACE}.svc.cluster.local, svc.cluster.local, cluster.local, mpt1.pf9.io]
           enp2s0:
             dhcp4: true
+            dhcp4-overrides:
+              use-routes: false
+              use-dns: false
+            routes:
+              - to: 0.0.0.0/0
+                via: 10.0.2.1
+                table: 200
+              - to: ${POD_CIDR}
+                via: 10.0.2.1
+                table: 200
+            routing-policy:
+              - from: ${POD_CIDR}
+                table: 200
+                priority: 100
       userData: |-
         #cloud-config
-        password: ubuntu123
+        password: ubuntu
         ssh_pwauth: True
         manage_etc_hosts: true
         chpasswd: { expire: False }
