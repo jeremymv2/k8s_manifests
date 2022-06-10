@@ -73,7 +73,7 @@ spec:
                     via: ${WHEREABOUTS_GATEWAY}
                     metric: 3
                 nameservers:
-                  addresses: [8.8.8.8, 8.8.4.4]
+                  addresses: [${KUBE_DNS_SERVER}, 8.8.8.8, 8.8.4.4]
                   search: [${NAMESPACE}.svc.cluster.local, svc.cluster.local, cluster.local, mpt1.pf9.io]
               enp2s0:
                 dhcp4: true
@@ -90,10 +90,20 @@ spec:
                   - to: ${POD_CIDR}
                     via: 10.0.2.1
                     table: 200
+                  - to: ${SVC_CIDR}
+                    via: 10.0.2.1
+                    table: 200
+                  - to: ${POD_CIDR}
+                    via: 10.0.2.1
+                  - to: ${SVC_CIDR}
+                    via: 10.0.2.1
                 routing-policy:
                   - from: ${POD_CIDR}
                     table: 200
                     priority: 100
+                  - from: ${SVC_CIDR}
+                    table: 200
+                    priority: 110
           userData: |-
             #cloud-config
             password: ubuntu

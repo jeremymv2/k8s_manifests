@@ -52,6 +52,9 @@ WHEREABOUTS_NET_RANGE := 10.128.144.0/23
 WHEREABOUTS_NET_START := 10.128.144.250
 WHEREABOUTS_NET_END := 10.128.144.254
 WHEREABOUTS_GATEWAY := 10.128.144.1
+POD_CIDR := 10.20.0.0/16
+SVC_CIDR := 10.21.0.0./16
+KUBE_DNS_SERVER := 10.21.0.10
 ```
 
 ### Storage
@@ -154,14 +157,18 @@ First, ensure the Host has an available NIC that is UP but without an IP assigne
 Set the following values in the Makefile:
 
 ```
-SECONDARY_NIC ?= ens7
+STORAGE_CLASS_NAME := nfs-csi
+SECONDARY_NIC := ens7
 OVS_BRIDGE := ovs-br01
+# vlan is only if interface has tagged vlan
 WHEREABOUTS_VLAN_ID := 2504
 WHEREABOUTS_NET_RANGE := 10.128.144.0/23
 WHEREABOUTS_NET_START := 10.128.144.250
 WHEREABOUTS_NET_END := 10.128.144.254
 WHEREABOUTS_GATEWAY := 10.128.144.1
 POD_CIDR := 10.20.0.0/16
+SVC_CIDR := 10.21.0.0./16
+KUBE_DNS_SERVER := 10.21.0.10
 ```
 
 Ensure the templates are re-rendered with `make render`.
@@ -203,10 +210,16 @@ Finally, apply the `NetworkAttachmentDefinition`
 kubectl apply -f rendered/networkattachmentdef.yaml
 ```
 
-You can then create a VMI utilizing ovs for the interface
+You can then create a `VirtualMachineInstance` utilizing ovs for the interface
 
 ```shell
 kubectl apply -f rendered/vmi-ubuntu-containerdisk-emptydisk-ovs.yaml
+```
+
+or a `VirtualMachine`
+
+```shell
+kubectl apply -f rendered/vm-centos-http-readwritemany-ovs.yaml
 ```
 
 ## Live Migration
