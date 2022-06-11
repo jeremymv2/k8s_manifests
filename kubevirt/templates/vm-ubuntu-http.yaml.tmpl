@@ -19,7 +19,7 @@ spec:
         storageClassName: ${STORAGE_CLASS_NAME}
       source:
         http:
-          url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+          url: https://kubevirt.s3.us-west-2.amazonaws.com/ubuntu-20.04-server-cloudimg-amd64.qcow2
   running: true
   template:
     metadata:
