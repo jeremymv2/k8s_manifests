@@ -14,7 +14,7 @@ spec:
       - ReadWriteOnce
     resources:
       requests:
-        storage: 5Gi
+        storage: 10Gi
 ---
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
@@ -22,9 +22,7 @@ metadata:
   labels:
     kubevirt.io/vm: ubuntu-cloned
   name: ubuntu-cloned
-  namespace: ${NAMESPACE}
 spec:
-  #runStrategy: Manual
   running: true
   template:
     metadata:

@@ -139,6 +139,18 @@ Watch the cloud init logs (be patient. cloud-init output takes several minutes t
 ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
 ```
 
+## Golden Image
+
+You may choose to host a "golden image" as a `DataVolume` type then clone VMs from it.
+
+```shell
+kubectl apply -f rendered/centos-golden-dv.yaml
+```
+
+```shell
+kubectl apply -f rendered/centos-cloned.yaml
+```
+
 ## Workstation virt kubectl plugin
 
 ```shell
