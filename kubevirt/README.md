@@ -137,6 +137,8 @@ make install-krew-virt
 
 ## Advanced Networking
 
+Note: For all of the following examples, it's best to have a CSI / StorageClass set that allows RWX access mode.
+
 With multus we can enable a secondary CNI with either `ovs` bridge or `sriov`. This allows us
 to add a second NIC to the VM with direct access to the Host's network interface. Additionally, with
 whereabouts, we can implement IPAM for the VM interfaces.
