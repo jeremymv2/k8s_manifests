@@ -1,0 +1,107 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  labels:
+    kubevirt.io/vm: centos-master
+  name: centos-master
+  namespace: ${NAMESPACE}
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      name: centos-master-1-dv
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 10G
+        storageClassName: ${STORAGE_CLASS_NAME}
+      source:
+        http:
+          url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: centos-master
+    spec:
+      domain:
+        cpu:
+          cores: 1
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: datavolumevolume
+          - disk:
+              bus: virtio
+            name: cloudinit
+          interfaces:
+          - name: ovs-ipam-net1
+            bridge: {}
+            ports:
+              - port: 22
+              - port: 80
+              - port: 443
+          - name: default
+            masquerade: {}
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 4G
+      terminationGracePeriodSeconds: 0
+      networks:
+      - name: ovs-ipam-net1
+        multus:
+          networkName: ovs-ipam-net
+      - name: default
+        pod: {}
+      volumes:
+      - dataVolume:
+          name: centos-master-1-dv
+        name: datavolumevolume
+      - cloudInitNoCloud:
+          networkData: |-
+            version: 1
+            config:
+              - type: physical
+                name: eth0
+                subnets:
+                  - type: dhcp
+              - type: physical
+                name: eth1
+                subnets:
+                  - type: static
+                    address: 10.0.2.2/24
+                    gateway: 10.0.2.1
+                    dns_nameservers:
+                      - ${KUBE_DNS_SERVER}
+                      - 8.8.8.8
+                      - 8.8.4.4
+                    dns_search:
+                      - ${NAMESPACE}.svc.cluster.local
+                      - svc.cluster.local
+                      - cluster.local
+                      - mpt1.pf9.io
+          userData: |-
+              #!/bin/bash
+              setenforce 0 || true
+              echo "centos" | passwd centos --stdin
+              echo "${PUB_SSH_KEY}" > ~centos/.ssh/authorized_keys
+              echo "GATEWAY=${WHEREABOUTS_GATEWAY}" >> /etc/sysconfig/network
+              echo "GATEWAYDEV=eth0" >> /etc/sysconfig/network
+              echo "${POD_CIDR} via 10.0.2.1 dev eth1" > /etc/sysconfig/network-scripts/route-eth1
+              echo "${SVC_CIDR} via 10.0.2.1 dev eth1" >> /etc/sysconfig/network-scripts/route-eth1
+              echo "default via 10.0.2.1 dev eth1 table 200" >> /etc/sysconfig/network-scripts/route-eth1
+              echo "10.0.2.0/24 via 10.0.2.1 dev eth1 table 200" >> /etc/sysconfig/network-scripts/route-eth1
+              echo "${POD_CIDR} via 10.0.2.1 dev eth1 table 200" >> /etc/sysconfig/network-scripts/route-eth1
+              echo "${SVC_CIDR} via 10.0.2.1 dev eth1 table 200" >> /etc/sysconfig/network-scripts/route-eth1
+              echo "prio 100 from ${POD_CIDR} lookup 200" > /etc/sysconfig/network-scripts/rule-eth1
+              echo "prio 110 from ${SVC_CIDR} lookup 200" >> /etc/sysconfig/network-scripts/rule-eth1
+              systemctl restart network
+              curl -sL https://pmkft-assets.s3-us-west-1.amazonaws.com/pf9ctl_setup -o- | bash >/tmp/cloudinit.log 2>&1
+              pf9ctl config set -u "${DDU_URL}" -e "${ADMIN_USER_LOGIN}" -p '${ADMIN_USER_PASSWORD}' -t "${SERVICE}" -r "${REGION}" --no-prompt >>/tmp/cloudinit.log 2>&1
+              nice -5 pf9ctl prep-node --skip-checks --no-prompt >>/tmp/cloudinit.log 2>&1
+        name: cloudinit

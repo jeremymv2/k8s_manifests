@@ -114,30 +114,7 @@ Or via the `virt` plugin if you have installed it on your workstation using clou
 kubectl virt console fedora-vm
 ```
 
-Note: Explore the other yaml files in the `rendered/` directory and try applying them.
-
-## VirtualMachineInstance auto join a PMK cluster
-
-Create a copy of the `admin.rc` template
-
-```shell
-cp admin.rc.tmpl admin.rc
-```
-
-Edit the `admin.rc` file and configure the DU variables. Then source the file into your environment,
-re-render the templates and then launch the VM.
-
-```shell
-source admin.rc
-make render
-kubectl apply -f rendered/vmi-ubuntu-containerdisk-emptydisk-join-cluster.yaml
-```
-
-Watch the cloud init logs (be patient. cloud-init output takes several minutes to show up)
-
-```shell
-ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
-```
+Explore the other yaml files in the `rendered/` directory and try applying them.
 
 ## Golden Image
 
@@ -233,6 +210,46 @@ or a `VirtualMachine`
 ```shell
 kubectl apply -f rendered/vm-centos-http-readwritemany-ovs.yaml
 ```
+
+## PMK master/worker `VirtualMachine`s
+
+Create a copy of the `admin.rc` template
+
+```shell
+cp admin.rc.tmpl admin.rc
+```
+
+Edit the `admin.rc` file and configure the DU variables. Then source the file into your environment,
+re-render the templates and then launch the VM.
+
+```shell
+source admin.rc
+make render
+kubectl apply -f rendered/vm-pmk-master.yaml
+```
+
+Watch the cloud init logs (be patient. cloud-init output takes several minutes to show up)
+
+```shell
+ssh -i ~/.ssh/id_ed25519 ubuntu@10.20.3.142 "tail -f /tmp/cloudinit.log"
+```
+
+Once the Master VirtualMachineInstance attaches to the control plane, install a single master PMK
+cluster on it.
+
+NOTE: You must choose a custom POD and SVC CIDR for it, so as not to collide with the "upper"
+PMK cluster. For example: 10.22.0.0/16 and 10.23.0.0/16.
+
+After the Master nodes finishes converging and the cluster is ready, take note of the cluster UUID
+and update it in the `admin.rc` file. Source the file again, render the templates and spin up the worker.
+
+```shell
+source admin.rc
+make render
+kubectl apply -f rendered/vm-pmk-worker.yaml
+```
+
+The Worker VirtualMachine should auto join the cluser after it finishes converging.
 
 ## Live Migration
 
