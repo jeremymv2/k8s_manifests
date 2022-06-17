@@ -12,10 +12,29 @@ The `Makefile` here pretty much takes care of the installation of all the K8s co
 make check
 ```
 
-Export an NFS share as such:
+Export an NFS share. For demo purposes, here is how you can accomplish that on ubuntu:
+
 ```
-/srv/nfs/kubedata/ *(rw,async,no_subtree_check,no_root_squash,insecure)
+mkdir -p /srv/nfs/kubedata/
+chown -R nobody:nogroup /srv/nfs/kubedata/
+echo '/srv/nfs/kubedata/ *(rw,async,no_subtree_check,no_root_squash,insecure)' >> /etc/exports
+exportfs -rav
 ```
+
+Check that it can be mounted:
+
+```
+mount -t nfs SERVER_IP:/srv/nfs/kubedata /mnt/nfs
+df -H /mnt/nfs
+```
+
+If you were able to mount the NFS share, you can now unmount it:
+
+```
+umount /mnt/nfs
+```
+
+You will need to install `nfs-common` and `nfs-client` on all the K8s worker nodes.
 
 # Setup
 
