@@ -8,7 +8,7 @@ STORAGE_CLASS_NAME := nfs-csi
 CONTROLLER_RUN_ON_MASTERS := true
 CONTROLLER_REPLICAS := 2
 DRIVER_MOUNT_PERMISSIONS := 0777
-NFS_SERVER := 10.128.144.128
+NFS_SERVER := 10.128.144.111
 NFS_PATH   :=  /srv/nfs/kubedata
 VOLUME_BINDING_MODE := Immediate
 NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail
@@ -47,8 +47,7 @@ labels:
 		nodes $$master kubernetes.io/role=master || true ; \
 	done
 
-#apply: setup labels
-apply: labels
+apply: setup labels
 	@echo "Templating chart $(RELEASE_NAME) yaml with version $(CHART_VERSION) from $(CHART_REPO)/$(CHART_NAME) \
 		into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	helm template $(RELEASE_NAME) $(CHART_REPO)/$(CHART_NAME) \
