@@ -85,6 +85,6 @@ test:
 		--for=condition=ready pod/busybox --timeout=120s
 	kubectl --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) -n default get pvc
 
-clean_test:
+clean:
 	envsubst < test-pvc.yaml | kubectl delete --context $(KUBE_CONTEXT) --kubeconfig $(KUBECONFIG) \
 		-n default --force=true -f -

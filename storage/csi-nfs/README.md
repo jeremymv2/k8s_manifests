@@ -71,7 +71,7 @@ make test
 Cleanup Test
 
 ```shell
-make cleanup_test
+make clean
 ```
 
 # Uninstall
