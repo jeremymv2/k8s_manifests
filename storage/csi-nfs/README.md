@@ -42,7 +42,7 @@ Edit the `Makefile` in this directory and change these lines as needed:
 
 ```
 CHART_VERSION := v4.0.0
-CONTROLLER_REPLICAS := 2
+CONTROLLER_REPLICAS := 1
 DRIVER_MOUNT_PERMISSIONS := 0777
 NFS_SERVER := 10.128.144.128
 NFS_PATH   :=  /srv/nfs/kubedata
