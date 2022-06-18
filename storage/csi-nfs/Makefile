@@ -6,6 +6,7 @@ RELEASE_NAME := $(CHART_NAME)
 REPO_URL   := https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
 STORAGE_CLASS_NAME := nfs-csi
 CONTROLLER_RUN_ON_MASTERS := true
+# Equal to number of masters
 CONTROLLER_REPLICAS := 1
 DRIVER_MOUNT_PERMISSIONS := 0777
 NFS_SERVER := 10.128.144.111

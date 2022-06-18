@@ -42,6 +42,7 @@ Edit the `Makefile` in this directory and change these lines as needed:
 
 ```
 CHART_VERSION := v4.0.0
+# Equal to number of masters
 CONTROLLER_REPLICAS := 1
 DRIVER_MOUNT_PERMISSIONS := 0777
 NFS_SERVER := 10.128.144.128
