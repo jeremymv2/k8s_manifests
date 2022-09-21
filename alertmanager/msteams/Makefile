@@ -1,16 +1,16 @@
 NAMESPACE  := pf9-monitoring
 CHART_NAME := prometheus-msteams
 CHART_REPO := $(CHART_NAME)
-CHART_VERSION := 1.3.0
-APP_VERSION_TAG := v1.5.0
+CHART_VERSION := 1.3.1
+APP_VERSION_TAG := v1.5.1
 RELEASE_NAME := $(CHART_NAME)-$(shell echo $(CHART_VERSION) | sed -e 's/\./\-/g')
 REPO_URL   := https://prometheus-msteams.github.io/prometheus-msteams/
 CONNECTOR_NAME := msteams
-CONNECTOR_NAME_URL := https://yourdomain.webhook.office.com/webhookb2/..
+CONNECTOR_NAME_URL := https://CHANGEME.webhook.office.com/webhookb2/CHANGEME/IncomingWebhook/CHANGEME/CHANGEME
 
 export APP_VERSION_TAG CONNECTOR_NAME CONNECTOR_NAME_URL
 
-include ../Makefile
+include ../../Makefile
 
 setup: install_helm
 	helm repo add $(CHART_REPO) $(REPO_URL)

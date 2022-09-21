@@ -17,8 +17,8 @@ make check
 Edit the `Makefile` in this directory and change these lines as needed:
 
 ```
-CHART_VERSION := 1.3.0
-APP_VERSION_TAG := v1.5.0
+CHART_VERSION := 1.3.1
+APP_VERSION_TAG := v1.5.1
 CONNECTOR_NAME_URL := Some Long URL at webhook.office.com
 ```
 

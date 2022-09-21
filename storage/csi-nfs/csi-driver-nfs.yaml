@@ -228,7 +228,7 @@ metadata:
     app.kubernetes.io/version: "v4.0.0"
     helm.sh/chart: "csi-driver-nfs-v4.0.0"
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: csi-nfs-controller
@@ -369,7 +369,7 @@ metadata:
   namespace: kube-system
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 10.128.144.128
+  server: 10.128.144.195
   share: /srv/nfs/kubedata
   # csi.storage.k8s.io/provisioner-secret is only needed for providing mountOptions in DeleteVolume
   csi.storage.k8s.io/provisioner-secret-name: "mount-options"
