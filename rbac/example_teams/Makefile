@@ -10,7 +10,7 @@ TEAM_NS = airflow \
 
 define generate_file
 	kubectl create ns $(2) $(DRY_RUN) | kubectl apply -f - ; \
-		sed -e 's/{{TEAM}}/$(1)/' team-ns-binding.yaml | kubectl apply --namespace $(2) $(DRY_RUN) -f - > policy/$(1)-$(2).yaml;
+		sed -e 's/{{TEAM}}/$(1)/' team-ns-binding.yaml | kubectl create --namespace $(2) $(DRY_RUN) -f - > policy/$(1)-$(2).yaml;
 endef
 
 install_teams:
