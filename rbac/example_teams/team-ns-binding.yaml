@@ -31,6 +31,9 @@ rules:
   - deployments
   - deployments/scale
   - deployments/status
+  - statefulsets
+  - statefulsets/scale
+  - statefulsets/status
   verbs:
   - create
   - get
