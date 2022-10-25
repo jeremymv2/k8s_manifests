@@ -6,11 +6,14 @@ DRY_RUN := --dry-run=client -o yaml
 # add teams below
 # remember multi-lines need a tab to begin the line
 
-TEAM_NAME = devteam
-TEAM_NS = foo \
+TIGER_TEAM_NAME = tiger
+TIGER_TEAM_NS = foo \
 	bar \
 	baz \
 	default
+
+# LION_TEAM_NAME = lion
+# LION_TEAM_NS = ..
 
 define generate_file
 	sed -e 's/{{TEAM}}/$(1)/' team-ns-binding.yaml | kubectl create \
@@ -22,8 +25,10 @@ endef
 
 install_teams:
 	@echo "Generating manifests in policy directory."
-	@$(foreach ns,$(TEAM_NS),$(call generate_file,$(TEAM_NAME),$(ns)))
-	@echo "Applying the new policy.."
+	@$(foreach ns,$(TIGER_TEAM_NS),$(call generate_file,$(TIGER_TEAM_NAME),$(ns)))
+	# Uncomment below for supporting additional teams
+	# @$(foreach ns,$(LION_TEAM_NS),$(call generate_file,$(LION_TEAM_NAME),$(ns)))
+	@echo "Applying the RBAC policy.."
 	for f in $$(ls -r policy/*yaml); do \
 		echo ">> Applying $${f}" ; \
 		cat $${f} | kubectl apply \
@@ -32,7 +37,7 @@ install_teams:
 		-f - ; done
 
 uninstall_teams:
-	@echo "Removing k8s policy.."
+	@echo "Removing RBAC policy.."
 	for f in $$(ls -r policy/*yaml); do \
 		echo ">> Deleting $${f}" ; \
 		cat $${f} | kubectl delete \
