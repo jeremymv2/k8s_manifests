@@ -10,6 +10,7 @@ rules:
   - endpoints
   - pods
   - pods/log
+  - replicationcontrollers
   - services
   verbs:
   - get
@@ -35,8 +36,10 @@ rules:
 - apiGroups:
   - apps
   resources:
+  - daemonsets
   - deployments
   - deployments/status
+  - replicasets
   - statefulsets
   - statefulsets/status
   verbs:
@@ -65,6 +68,14 @@ rules:
   resources:
   - ingressclasses
   - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
   verbs:
   - get
   - list
