@@ -1,4 +1,4 @@
-KUBECONFIG ?= default
+KUBECONFIG ?= default_kubeconfig
 KUBE_CONTEXT ?= default
 
 DRY_RUN := --dry-run=client -o yaml
