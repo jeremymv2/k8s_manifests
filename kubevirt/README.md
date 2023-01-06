@@ -145,6 +145,11 @@ whereabouts, we can implement IPAM for the VM interfaces.
 
 First, ensure the Host has an available NIC that is UP but without an IP assigned.
 
+```
+ip link set dev ens7 up
+```
+
+
 Set the following values in the Makefile:
 
 ```
@@ -210,7 +215,7 @@ kubectl apply -f rendered/vmi-ubuntu-containerdisk-emptydisk-ovs.yaml
 or a `VirtualMachine`
 
 ```shell
-kubectl apply -f rendered/vm-centos-http-readwritemany-ovs.yaml
+kubectl apply -f rendered/vm-ubuntu-http-readwritemany-ovs.yaml
 ```
 
 ## PMK master/worker `VirtualMachine`s
@@ -262,11 +267,11 @@ Also, you must utilize a storage class that supports `ReadWriteMany` access mode
 Create a VM that uses `ReadWriteMany` PVC, a default pod interface in `masquerade` mode, and a secondary interface in multus ovs bridge mode.
 
 ```shell
-apply -f rendered/vm-centos-http-readwritemany-ovs.yaml
+apply -f rendered/vm-ubuntu-http-readwritemany-ovs.yaml
 ```
 
 After it spins up, live migrate it
 
 ```shell
-kubectl virt migrate centos-rwx-ovs
+kubectl virt migrate ubuntu-rwx-ovs
 ```
