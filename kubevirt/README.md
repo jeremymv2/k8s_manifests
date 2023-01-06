@@ -218,7 +218,7 @@ or a `VirtualMachine`
 kubectl apply -f rendered/vm-ubuntu-http-readwritemany-ovs.yaml
 ```
 
-## PMK master/worker `VirtualMachine`s
+## PMK master/worker `VirtualMachine`s in Kubevirt!
 
 Create a copy of the `admin.rc` template
 
