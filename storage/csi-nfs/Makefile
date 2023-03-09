@@ -69,7 +69,7 @@ apply: setup
 	kubectl delete secret generic mount-options \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
-		--namespace $(NAMESPACE) || true
+		--namespace $(NAMESPACE) 2>/dev/null || true
 	kubectl create secret generic mount-options \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
