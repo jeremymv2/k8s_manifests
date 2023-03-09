@@ -9,7 +9,7 @@ CONTROLLER_RUN_ON_MASTERS := true
 # Equal to number of masters
 CONTROLLER_REPLICAS := 3
 DRIVER_MOUNT_PERMISSIONS := 0777
-NFS_SERVER := 10.128.144.195
+NFS_SERVER := 192.168.122.24
 NFS_PATH   :=  /srv/nfs/kubedata
 VOLUME_BINDING_MODE := Immediate
 NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail
@@ -48,7 +48,7 @@ labels:
 		nodes $$master kubernetes.io/role=master || true ; \
 	done
 
-apply: setups
+apply: setup
 	@echo "Templating chart $(RELEASE_NAME) yaml with version $(CHART_VERSION) from $(CHART_REPO)/$(CHART_NAME) \
 		into namespace $(NAMESPACE) with context $(KUBE_CONTEXT) from $(KUBECONFIG)"
 	helm template $(RELEASE_NAME) $(CHART_REPO)/$(CHART_NAME) \
@@ -75,6 +75,13 @@ apply: setups
 		--context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE) \
 		--from-literal mountOptions="$(NFS_MOUNT_OPTIONS)"
+
+default-sc:
+	@echo "Making $(STORAGE_CLASS_NAME) the default storage class"
+	kubectl patch storageclass $(STORAGE_CLASS_NAME) \
+		-p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}' \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT)
 
 test:
 	envsubst < test-pvc.yaml | kubectl apply \

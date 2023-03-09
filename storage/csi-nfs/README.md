@@ -80,3 +80,10 @@ make clean
 ```shell
 make destroy
 ```
+
+# Default StorageClass
+
+To make this the default storageclass
+```
+make default-sc
+```
