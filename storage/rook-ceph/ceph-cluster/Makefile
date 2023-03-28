@@ -14,6 +14,8 @@ MON_COUNT := 3
 PUB_AND_CLUSTER_NETWORKS_ENABLED := false
 DISABLE_CRASHCOLLECTOR := true
 STORAGE_CLASS_NAME_TO_TEST := ceph-block
+ENABLE_CEPHFS_SNAPSHOTS := false
+ENABLE_RBD_SNAPSHOTS := false
 
 ifeq ($(PUB_AND_CLUSTER_NETWORKS_ENABLED), true)
 	NETWORKING := --set "cephClusterSpec.network.connections.provider=host"
@@ -38,6 +40,8 @@ COMMON_ARGS := $(CHART_NAME) $(CHART_REPO)/$(CHART_NAME) \
 		--set "cephClusterSpec.storage.useAllNodes=false" \
 		--set "cephClusterSpec.storage.useAllDevices=false" \
 		--set "cephClusterSpec.crashCollector.disable=$(DISABLE_CRASHCOLLECTOR)" \
+		--set "cephFileSystemVolumeSnapshotClass.enabled=$(ENABLE_CEPHFS_SNAPSHOTS)" \
+		--set "cephBlockPoolsVolumeSnapshotClass.enabled=$(ENABLE_RBD_SNAPSHOTS)" \
 		$(NETWORKING) \
 		--values node_storage.yaml \
 		--values values_overrides.yaml
@@ -76,6 +80,13 @@ list:
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT) \
 		get cephcluster
+
+status:
+	kubectl --namespace $(NAMESPACE) \
+		--kubeconfig $(KUBECONFIG) \
+		--context $(KUBE_CONTEXT) \
+		exec -it $$(kubectl -n $(NAMESPACE) --kubeconfig $(KUBECONFIG) --context $(KUBE_CONTEXT) get pod -l "app=rook-ceph-tools" \
+		-o jsonpath='{.items[0].metadata.name}') -- bash -c 'ceph status; ceph osd tree; ceph osd status'
 
 verify-unique-names:
 	@echo "The following Objects are global"
