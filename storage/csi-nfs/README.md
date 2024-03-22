@@ -21,7 +21,7 @@ echo '/srv/nfs/kubedata/ *(rw,async,no_subtree_check,no_root_squash,insecure)' >
 exportfs -rav
 ```
 
-Check that it can be mounted:
+Optional - Check that it can be mounted:
 
 ```
 mount -t nfs SERVER_IP:/srv/nfs/kubedata /mnt/nfs
@@ -61,6 +61,10 @@ export KUBECONFIG=~/Downloads/cluster-name.yaml
 
 ```shell
 make apply
+```
+
+```shell
+make install-check
 ```
 
 # Test

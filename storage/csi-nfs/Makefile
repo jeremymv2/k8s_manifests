@@ -1,7 +1,7 @@
 NAMESPACE  := kube-system
 CHART_NAME := csi-driver-nfs
 CHART_REPO := $(CHART_NAME)
-CHART_VERSION := v4.1.0
+CHART_VERSION := v4.6.0
 RELEASE_NAME := $(CHART_NAME)
 REPO_URL   := https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
 STORAGE_CLASS_NAME := nfs-csi
@@ -9,7 +9,7 @@ CONTROLLER_RUN_ON_MASTERS := true
 # Equal to number of masters
 CONTROLLER_REPLICAS := 3
 DRIVER_MOUNT_PERMISSIONS := 0777
-NFS_SERVER := 192.168.122.24
+NFS_SERVER := 10.10.0.6
 NFS_PATH   :=  /srv/nfs/kubedata
 VOLUME_BINDING_MODE := Immediate
 NFS_MOUNT_OPTIONS := rsize=1048576,wsize=1048576,soft,timeo=600,retrans=2,noresvport,_netdev,nofail
@@ -82,6 +82,13 @@ default-sc:
 		-p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}' \
 		--kubeconfig $(KUBECONFIG) \
 		--context $(KUBE_CONTEXT)
+
+install-check:
+	kubectl --context $(KUBE_CONTEXT) \
+		--kubeconfig $(KUBECONFIG) wait -n default \
+		--for=condition=ready pod \
+		--namespace kube-system \
+		-l app.kubernetes.io/instance=csi-driver-nfs --timeout=120s
 
 test:
 	envsubst < test-pvc.yaml | kubectl apply \
